@@ -7,7 +7,25 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h> 
+#import <SBJson/SBJson.h>
 
-@interface ViewController : UIViewController
+#import "prefs.h"
+
+
+
+@interface ViewController : UIViewController {
+    UIButton *officialResponsesButton;
+    UIButton *openPeitionsButton;
+    UIButton *awaitingResponseButton;
+    
+    
+}
+
+@property (nonatomic, retain) IBOutlet UIButton *officialResponseButton;
+@property (nonatomic, retain) IBOutlet UIButton *openPeitionsButton;
+@property (nonatomic, retain) IBOutlet UIButton *awaitingResponseButton;
+
+
 
 @end

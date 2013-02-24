@@ -19,13 +19,28 @@
 		08CE9DDA16D7C6D5008AF6BA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CE9DD916D7C6D5008AF6BA /* ViewController.m */; };
 		08CE9DDD16D7C6D5008AF6BA /* ViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08CE9DDB16D7C6D5008AF6BA /* ViewController_iPhone.xib */; };
 		08CE9DE016D7C6D5008AF6BA /* ViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08CE9DDE16D7C6D5008AF6BA /* ViewController_iPad.xib */; };
+		08CE9DE816D7CACE008AF6BA /* prefs.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CE9DE716D7CACE008AF6BA /* prefs.m */; };
+		08CE9DEC16D7F434008AF6BA /* officialResponseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CE9DEA16D7F434008AF6BA /* officialResponseViewController.m */; };
+		08CE9DED16D7F434008AF6BA /* officialResponseViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08CE9DEB16D7F434008AF6BA /* officialResponseViewController.xib */; };
+		08CE9DF116D7F4B3008AF6BA /* openPeitionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CE9DEF16D7F4B3008AF6BA /* openPeitionsViewController.m */; };
+		08CE9DF216D7F4B3008AF6BA /* openPeitionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08CE9DF016D7F4B3008AF6BA /* openPeitionsViewController.xib */; };
+		08CE9DF616D7F575008AF6BA /* awaitingResponseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CE9DF416D7F575008AF6BA /* awaitingResponseViewController.m */; };
+		08CE9DF716D7F575008AF6BA /* awaitingResponseViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08CE9DF516D7F575008AF6BA /* awaitingResponseViewController.xib */; };
+		08CE9DFB16D812FB008AF6BA /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 08CE9DF916D812FA008AF6BA /* WebViewController.m */; };
+		08CE9DFC16D812FB008AF6BA /* WebViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08CE9DFA16D812FA008AF6BA /* WebViewController.xib */; };
+		08CE9DFE16D81B4B008AF6BA /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 08CE9DFD16D81B4B008AF6BA /* Default-568h@2x.png */; };
+		08CE9E0016D81B53008AF6BA /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 08CE9DFF16D81B53008AF6BA /* Default@2x.png */; };
+		08CE9E0216D81B69008AF6BA /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 08CE9E0116D81B69008AF6BA /* Default.png */; };
+		08CE9E0416D81B9A008AF6BA /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 08CE9E0316D81B9A008AF6BA /* Icon.png */; };
+		08CE9E0616D81B9E008AF6BA /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 08CE9E0516D81B9E008AF6BA /* Icon@2x.png */; };
+		E56CBEB60291477D900B9DE8 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B1CF65AF24043B895DE8242 /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		08CE9DBD16D7C6D4008AF6BA /* WeThePeople.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeThePeople.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		08CE9DC016D7C6D4008AF6BA /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		08CE9DC216D7C6D4008AF6BA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		08CE9DC416D7C6D4008AF6BA /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		08CE9DC016D7C6D4008AF6BA /* UIKit.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		08CE9DC216D7C6D4008AF6BA /* Foundation.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		08CE9DC416D7C6D4008AF6BA /* CoreGraphics.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		08CE9DC816D7C6D4008AF6BA /* WeThePeople-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WeThePeople-Info.plist"; sourceTree = "<group>"; };
 		08CE9DCA16D7C6D4008AF6BA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		08CE9DCC16D7C6D4008AF6BA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -39,6 +54,27 @@
 		08CE9DD916D7C6D5008AF6BA /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		08CE9DDC16D7C6D5008AF6BA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController_iPhone.xib; sourceTree = "<group>"; };
 		08CE9DDF16D7C6D5008AF6BA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController_iPad.xib; sourceTree = "<group>"; };
+		08CE9DE616D7CACE008AF6BA /* prefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = prefs.h; sourceTree = "<group>"; };
+		08CE9DE716D7CACE008AF6BA /* prefs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = prefs.m; sourceTree = "<group>"; };
+		08CE9DE916D7F434008AF6BA /* officialResponseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = officialResponseViewController.h; sourceTree = "<group>"; };
+		08CE9DEA16D7F434008AF6BA /* officialResponseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = officialResponseViewController.m; sourceTree = "<group>"; };
+		08CE9DEB16D7F434008AF6BA /* officialResponseViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = officialResponseViewController.xib; sourceTree = "<group>"; };
+		08CE9DEE16D7F4B3008AF6BA /* openPeitionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = openPeitionsViewController.h; sourceTree = "<group>"; };
+		08CE9DEF16D7F4B3008AF6BA /* openPeitionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = openPeitionsViewController.m; sourceTree = "<group>"; };
+		08CE9DF016D7F4B3008AF6BA /* openPeitionsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = openPeitionsViewController.xib; sourceTree = "<group>"; };
+		08CE9DF316D7F575008AF6BA /* awaitingResponseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = awaitingResponseViewController.h; sourceTree = "<group>"; };
+		08CE9DF416D7F575008AF6BA /* awaitingResponseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = awaitingResponseViewController.m; sourceTree = "<group>"; };
+		08CE9DF516D7F575008AF6BA /* awaitingResponseViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = awaitingResponseViewController.xib; sourceTree = "<group>"; };
+		08CE9DF816D812FA008AF6BA /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewController.h; sourceTree = "<group>"; };
+		08CE9DF916D812FA008AF6BA /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
+		08CE9DFA16D812FA008AF6BA /* WebViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WebViewController.xib; sourceTree = "<group>"; };
+		08CE9DFD16D81B4B008AF6BA /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		08CE9DFF16D81B53008AF6BA /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		08CE9E0116D81B69008AF6BA /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		08CE9E0316D81B9A008AF6BA /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		08CE9E0516D81B9E008AF6BA /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
+		4B1CF65AF24043B895DE8242 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		4CD6CEC8F877414F8923BA76 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +85,7 @@
 				08CE9DC116D7C6D4008AF6BA /* UIKit.framework in Frameworks */,
 				08CE9DC316D7C6D4008AF6BA /* Foundation.framework in Frameworks */,
 				08CE9DC516D7C6D4008AF6BA /* CoreGraphics.framework in Frameworks */,
+				E56CBEB60291477D900B9DE8 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,9 +95,15 @@
 		08CE9DB416D7C6D4008AF6BA = {
 			isa = PBXGroup;
 			children = (
+				08CE9E0516D81B9E008AF6BA /* Icon@2x.png */,
+				08CE9E0316D81B9A008AF6BA /* Icon.png */,
+				08CE9E0116D81B69008AF6BA /* Default.png */,
+				08CE9DFF16D81B53008AF6BA /* Default@2x.png */,
+				08CE9DFD16D81B4B008AF6BA /* Default-568h@2x.png */,
 				08CE9DC616D7C6D4008AF6BA /* WeThePeople */,
 				08CE9DBF16D7C6D4008AF6BA /* Frameworks */,
 				08CE9DBE16D7C6D4008AF6BA /* Products */,
+				4CD6CEC8F877414F8923BA76 /* Pods.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -78,6 +121,7 @@
 				08CE9DC016D7C6D4008AF6BA /* UIKit.framework */,
 				08CE9DC216D7C6D4008AF6BA /* Foundation.framework */,
 				08CE9DC416D7C6D4008AF6BA /* CoreGraphics.framework */,
+				4B1CF65AF24043B895DE8242 /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -85,12 +129,26 @@
 		08CE9DC616D7C6D4008AF6BA /* WeThePeople */ = {
 			isa = PBXGroup;
 			children = (
+				08CE9DF816D812FA008AF6BA /* WebViewController.h */,
+				08CE9DF916D812FA008AF6BA /* WebViewController.m */,
+				08CE9DFA16D812FA008AF6BA /* WebViewController.xib */,
 				08CE9DCF16D7C6D4008AF6BA /* AppDelegate.h */,
+				08CE9DE616D7CACE008AF6BA /* prefs.h */,
+				08CE9DE716D7CACE008AF6BA /* prefs.m */,
 				08CE9DD016D7C6D4008AF6BA /* AppDelegate.m */,
 				08CE9DD816D7C6D5008AF6BA /* ViewController.h */,
 				08CE9DD916D7C6D5008AF6BA /* ViewController.m */,
 				08CE9DDB16D7C6D5008AF6BA /* ViewController_iPhone.xib */,
 				08CE9DDE16D7C6D5008AF6BA /* ViewController_iPad.xib */,
+				08CE9DF316D7F575008AF6BA /* awaitingResponseViewController.h */,
+				08CE9DF416D7F575008AF6BA /* awaitingResponseViewController.m */,
+				08CE9DF516D7F575008AF6BA /* awaitingResponseViewController.xib */,
+				08CE9DEE16D7F4B3008AF6BA /* openPeitionsViewController.h */,
+				08CE9DEF16D7F4B3008AF6BA /* openPeitionsViewController.m */,
+				08CE9DF016D7F4B3008AF6BA /* openPeitionsViewController.xib */,
+				08CE9DE916D7F434008AF6BA /* officialResponseViewController.h */,
+				08CE9DEA16D7F434008AF6BA /* officialResponseViewController.m */,
+				08CE9DEB16D7F434008AF6BA /* officialResponseViewController.xib */,
 				08CE9DC716D7C6D4008AF6BA /* Supporting Files */,
 			);
 			path = WeThePeople;
@@ -120,6 +178,7 @@
 				08CE9DB916D7C6D4008AF6BA /* Sources */,
 				08CE9DBA16D7C6D4008AF6BA /* Frameworks */,
 				08CE9DBB16D7C6D4008AF6BA /* Resources */,
+				7C072A7AA8D74553BBD3DE19 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -167,10 +226,36 @@
 				08CE9DD716D7C6D5008AF6BA /* Default-568h@2x.png in Resources */,
 				08CE9DDD16D7C6D5008AF6BA /* ViewController_iPhone.xib in Resources */,
 				08CE9DE016D7C6D5008AF6BA /* ViewController_iPad.xib in Resources */,
+				08CE9DED16D7F434008AF6BA /* officialResponseViewController.xib in Resources */,
+				08CE9DF216D7F4B3008AF6BA /* openPeitionsViewController.xib in Resources */,
+				08CE9DF716D7F575008AF6BA /* awaitingResponseViewController.xib in Resources */,
+				08CE9DFC16D812FB008AF6BA /* WebViewController.xib in Resources */,
+				08CE9DFE16D81B4B008AF6BA /* Default-568h@2x.png in Resources */,
+				08CE9E0016D81B53008AF6BA /* Default@2x.png in Resources */,
+				08CE9E0216D81B69008AF6BA /* Default.png in Resources */,
+				08CE9E0416D81B9A008AF6BA /* Icon.png in Resources */,
+				08CE9E0616D81B9E008AF6BA /* Icon@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7C072A7AA8D74553BBD3DE19 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		08CE9DB916D7C6D4008AF6BA /* Sources */ = {
@@ -180,6 +265,11 @@
 				08CE9DCD16D7C6D4008AF6BA /* main.m in Sources */,
 				08CE9DD116D7C6D4008AF6BA /* AppDelegate.m in Sources */,
 				08CE9DDA16D7C6D5008AF6BA /* ViewController.m in Sources */,
+				08CE9DE816D7CACE008AF6BA /* prefs.m in Sources */,
+				08CE9DEC16D7F434008AF6BA /* officialResponseViewController.m in Sources */,
+				08CE9DF116D7F4B3008AF6BA /* openPeitionsViewController.m in Sources */,
+				08CE9DF616D7F575008AF6BA /* awaitingResponseViewController.m in Sources */,
+				08CE9DFB16D812FB008AF6BA /* WebViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,6 +363,7 @@
 		};
 		08CE9DE416D7C6D5008AF6BA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4CD6CEC8F877414F8923BA76 /* Pods.xcconfig */;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WeThePeople/WeThePeople-Prefix.pch";
@@ -284,6 +375,7 @@
 		};
 		08CE9DE516D7C6D5008AF6BA /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4CD6CEC8F877414F8923BA76 /* Pods.xcconfig */;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WeThePeople/WeThePeople-Prefix.pch";
@@ -312,6 +404,7 @@
 				08CE9DE516D7C6D5008AF6BA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
