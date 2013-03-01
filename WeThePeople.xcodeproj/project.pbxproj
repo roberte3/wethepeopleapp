@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0815079C16D9C6C400C311DF /* readme.md in Resources */ = {isa = PBXBuildFile; fileRef = 0815079B16D9C6C400C311DF /* readme.md */; };
 		08CE9DC116D7C6D4008AF6BA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08CE9DC016D7C6D4008AF6BA /* UIKit.framework */; };
 		08CE9DC316D7C6D4008AF6BA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08CE9DC216D7C6D4008AF6BA /* Foundation.framework */; };
 		08CE9DC516D7C6D4008AF6BA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08CE9DC416D7C6D4008AF6BA /* CoreGraphics.framework */; };
@@ -37,6 +38,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0815079B16D9C6C400C311DF /* readme.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.md; sourceTree = "<group>"; };
 		08CE9DBD16D7C6D4008AF6BA /* WeThePeople.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeThePeople.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		08CE9DC016D7C6D4008AF6BA /* UIKit.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		08CE9DC216D7C6D4008AF6BA /* Foundation.framework */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -149,6 +151,7 @@
 				08CE9DE916D7F434008AF6BA /* officialResponseViewController.h */,
 				08CE9DEA16D7F434008AF6BA /* officialResponseViewController.m */,
 				08CE9DEB16D7F434008AF6BA /* officialResponseViewController.xib */,
+				0815079B16D9C6C400C311DF /* readme.md */,
 				08CE9DC716D7C6D4008AF6BA /* Supporting Files */,
 			);
 			path = WeThePeople;
@@ -235,6 +238,7 @@
 				08CE9E0216D81B69008AF6BA /* Default.png in Resources */,
 				08CE9E0416D81B9A008AF6BA /* Icon.png in Resources */,
 				08CE9E0616D81B9E008AF6BA /* Icon@2x.png in Resources */,
+				0815079C16D9C6C400C311DF /* readme.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

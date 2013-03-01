@@ -12,6 +12,9 @@
 
 @interface officialResponseViewController : UIViewController <UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate, UIWebViewDelegate> {
     UITableView *tableView;
+    NSString *savedSearchTerm;
+    BOOL SearchWasActive;
+    NSInteger savedScopeButtonIndex; 
 
 }
 

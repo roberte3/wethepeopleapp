@@ -17,7 +17,11 @@
 @implementation officialResponseViewController
 @synthesize tableView;
 
+
 NSMutableArray *peitionTableViewArray;
+NSMutableArray *unfilteredPeitionTableViewArray;
+NSMutableArray *issuesArray;
+NSMutableArray *pickerViewArray;
 
 -(IBAction)backButtonClick:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
@@ -32,7 +36,47 @@ NSMutableArray *peitionTableViewArray;
     return self;
 }
 
+#pragma mark pickerView Code 
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
+    NSLog(@"picker row text: %@", [pickerViewArray objectAtIndex:row]); 
+    
+// Handle the selection
+//    NSArray *issues = [[NSArray alloc] initWithArray:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"issues"]];
+//    for (int j =0;  j<[issues count]; j++) {
+//        NSLog(@"%@", [[issues objectAtIndex:j] objectForKey:@"name"]);
+//    }
+    
+    
+    [tableView reloadData]; //Update the table
+    
+}
 
+// tell the picker how many rows are available for a given component
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    NSUInteger numRows = [pickerViewArray count];
+    
+    return numRows;
+}
+
+// tell the picker how many components it will have
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+    return 1;
+}
+
+// tell the picker the title for a given component
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    NSString *catagory;
+    catagory = [pickerViewArray objectAtIndex:row]; 
+    
+    return catagory;
+}
+
+// tell the picker the width of each row for a given component
+- (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component {
+    int sectionWidth = 300;
+    
+    return sectionWidth;
+}
 
 
 #pragma mark tableView Code
@@ -44,29 +88,11 @@ NSMutableArray *peitionTableViewArray;
     
     NSLog(@"Issue URL: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"url" ]);
 
-    
     NSURL *url = [ [ NSURL alloc ] initWithString:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"url"] ];
     [[UIApplication sharedApplication] openURL:url];
-
-//    CGRect webFrame = CGRectMake(0.0, 0.0, 320.0, 460.0);
-//    UIWebView *webView = [[UIWebView alloc] initWithFrame:webFrame];
-//    [webView setBackgroundColor:[UIColor greenColor]];
-//    NSURLRequest *requestObj = [NSURLRequest requestWithURL:url];
-//    [webView loadRequest:requestObj];
-
-    
-    
-    
     WebViewController *viewController = [[WebViewController alloc] initWithNibName:@"WebViewController" bundle:nil];
-    
     [self.navigationController pushViewController:viewController animated:YES];
 
-
-    //Stub slide out UIView with details about the peition.
-    //NSLog(@"%@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"body"]);
-    
-//    selectedSignaturesID = [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"id"];
-    
 }
 
 
@@ -166,13 +192,19 @@ NSMutableArray *peitionTableViewArray;
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
+    NSArray *issues = [[NSArray alloc] initWithArray:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"issues"]];
+    for (int j =0;  j<[issues count]; j++) {
+        NSLog(@"%@", [[issues objectAtIndex:j] objectForKey:@"name"]);
+    }
+    
+
     return cell;
     
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-	return 50.0;
+	return 1.0;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 200.0;
@@ -188,11 +220,9 @@ NSMutableArray *peitionTableViewArray;
 
     for (int i = 0; i<[issueSorter count]; i++ ) {
         if ([[[issueSorter objectAtIndex:i] objectForKey:@"status"] isEqual: @"responded"]) {
-         NSLog(@"responded");
-            [peitionTableViewArray addObject:[issueSorter objectAtIndex:i]]; 
-    } else {
-        NSLog(@"open");
-    }
+            [unfilteredPeitionTableViewArray addObject:[issueSorter objectAtIndex:i]]; 
+            [peitionTableViewArray addObject:[issueSorter objectAtIndex:i]];
+        }
     }
 
 }
@@ -200,6 +230,8 @@ NSMutableArray *peitionTableViewArray;
     int searchBarHeight = 40; 
         [super viewDidAppear:animated];
         tableView.contentOffset = CGPointMake(0, searchBarHeight);
+    
+    
 
 }
 
@@ -211,7 +243,53 @@ NSMutableArray *peitionTableViewArray;
 
 
     peitionTableViewArray = [[NSMutableArray alloc] init];
+    issuesArray = [[NSMutableArray alloc] init]; 
+    unfilteredPeitionTableViewArray = [[NSMutableArray alloc] init]; 
+    pickerViewArray = [[NSMutableArray alloc] init];
     
+    //Create pickerView array;
+    [pickerViewArray addObject:@"Agriculture"];
+    [pickerViewArray addObject:@"Arts and Humanities"];
+    [pickerViewArray addObject:@"Budget and Taxes"];
+    [pickerViewArray addObject:@"Civil Rights and Liberties"];
+    [pickerViewArray addObject:@"Climate Change"];
+    [pickerViewArray addObject:@"Consumer Protections"];
+    [pickerViewArray addObject:@"Criminal Justice and Law Enforcement"];
+    [pickerViewArray addObject:@"Defense"];
+    [pickerViewArray addObject:@"Disabilities"];
+    [pickerViewArray addObject:@"Economy"];
+    [pickerViewArray addObject:@"Education"];
+    [pickerViewArray addObject:@"Energy"];
+    [pickerViewArray addObject:@"Environment"];
+    [pickerViewArray addObject:@"Family"];
+    [pickerViewArray addObject:@"Firearms"];
+    [pickerViewArray addObject:@"Foreign Policy"];
+    [pickerViewArray addObject:@"Government Reform"];
+    [pickerViewArray addObject:@"Health Care"];
+    [pickerViewArray addObject:@"Homeland Security and Disaster Relief"];
+    [pickerViewArray addObject:@"Housing"];
+    [pickerViewArray addObject:@"Human Rights"];
+    [pickerViewArray addObject:@"Immigration"];
+    [pickerViewArray addObject:@"Innovation"];
+    [pickerViewArray addObject:@"Job Creation"];
+    [pickerViewArray addObject:@"Labor"];
+    [pickerViewArray addObject:@"Natural Resources"];
+    [pickerViewArray addObject:@"Postal Service"];
+    [pickerViewArray addObject:@"Poverty"];
+    [pickerViewArray addObject:@"Regulatory Reform"];
+    [pickerViewArray addObject:@"Rural Policy"];
+    [pickerViewArray addObject:@"Science and Space Policy"];
+    [pickerViewArray addObject:@"Small Business"];
+    [pickerViewArray addObject:@"Social Security"];
+    [pickerViewArray addObject:@"Technology and Telecommunications"];
+    [pickerViewArray addObject:@"Trade"];
+    [pickerViewArray addObject:@"Transportation and Infrastructure"];
+    [pickerViewArray addObject:@"Urban Policy"];
+    [pickerViewArray addObject:@"Veterans and Military Families"]; 
+    [pickerViewArray addObject:@"Women's Issues"];
+    
+    NSLog(@"pickerViewArray %d", [pickerViewArray count]); 
+       
     UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     closeButton.frame = CGRectMake(0, 0, 60, 22);
     [closeButton setTitle:@"Back" forState:UIControlStateNormal];
@@ -234,20 +312,16 @@ NSMutableArray *peitionTableViewArray;
     
     
     UIButton *filterButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    filterButton.frame = CGRectMake(120, 24, 60, 22);
+    filterButton.frame = CGRectMake(60, 20, 200, 22);
     [filterButton setTitle:@"Filter" forState:UIControlStateNormal];
-    [filterButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    [filterButton addTarget:self action:@selector(filterButtonTouched:) forControlEvents:UIControlEventTouchUpInside];
     filterButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
     filterButton.layer.borderColor = [UIColor blackColor].CGColor;
     filterButton.layer.borderWidth = 1.0f;
     filterButton.layer.cornerRadius= 10.0f;
     [self.view addSubview:filterButton];
-    [filterButton addTarget:self action:@selector(filterButtonTouched:) forControlEvents:UIControlEventTouchUpInside];
     
-    //Add the subview to the UIView
-    [self.view addSubview:filterButton];
 
-    
     //Setup the Search Bar
     UISearchBar *searchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
     searchBar.barStyle=UIBarStyleBlackTranslucent;
@@ -257,13 +331,46 @@ NSMutableArray *peitionTableViewArray;
     searchBar.delegate=self;
     self.tableView.tableHeaderView=searchBar;
     
+    //Setup the PickerView 
+    UIPickerView *pickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 44, 320, 200)];
+    pickerView.showsSelectionIndicator = YES;
+    pickerView.delegate = self;
+    [self.view addSubview:pickerView];
+    [self.view bringSubviewToFront:tableView]; 
     
-    NSLog(@"total peitions: %d", [peitionTableViewArray count]);
 
 }
 
+
+#pragma mark IBActions 
+
 -(IBAction)filterButtonTouched:(id)sender {
     NSLog(@"Filter Button Touched");
+    
+    
+    if (tableView.frame.origin.y == 44.0f) { //Tableview is at top of screen. 
+            //slide the tableview down.
+        [UIView animateWithDuration:0.5
+                     animations:^{
+                         tableView.frame = CGRectMake(0,200, 320, 504);
+                     }
+                     completion:nil];
+    for (int i=0; i<[unfilteredPeitionTableViewArray count]; i++) {
+        //NSArray *issues = [[NSArray alloc] initWithArray:[[unfilteredPeitionTableViewArray objectAtIndex:i] objectForKey:@"issues"];
+            
+        NSDictionary *issuesDic = [[[unfilteredPeitionTableViewArray objectAtIndex:i] objectForKey:@"issues"] objectAtIndex:0];
+        [issuesArray addObject:issuesDic];
+            
+            
+            
+        }
+    } else {        //Slide the tableview up
+        [UIView animateWithDuration:0.5
+                         animations:^{
+                             tableView.frame = CGRectMake(0,44, 320, 504);
+                         }
+                         completion:nil];
+    }
 }
 
 -(IBAction)helpButtonTouched:(id)sender {
