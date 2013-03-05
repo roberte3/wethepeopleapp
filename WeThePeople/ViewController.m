@@ -19,11 +19,14 @@
 @synthesize openPeitionsButton;
 @synthesize officialResponseButton; 
 @synthesize awaitingResponseButton;
+@synthesize favortiePeitionsButton; 
 
 int currentPeitionsDownloadIncrementer = 0;
 int secondaryDownloadCount = 0;
 bool canAdvanceToNextScreen = FALSE;
 NSMutableArray *allPeitions;
+
+UIActivityIndicatorView *spinner; 
 
 
 NSMutableData *responseData; 
@@ -35,6 +38,15 @@ NSMutableData *responseData;
 
     allPeitions = [[NSMutableArray alloc] init]; 
     responseData = [NSMutableData data]; //Download temp cache.
+    spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    
+    spinner = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    spinner.frame = CGRectMake(0.0, 0.0, 80.0, 80.0);
+    spinner.center = self.view.center;
+    [self.view addSubview: spinner];
+    [self.view bringSubviewToFront:spinner];
+    [spinner startAnimating]; 
+    
     [self initialPetitionsDownload:self];
     //[self secondaryPetitionsDownload:self];
 
@@ -45,7 +57,7 @@ NSMutableData *responseData;
     NSLog(@"officialResponseTouch");
     if (canAdvanceToNextScreen) {
         officialResponseViewController *controller = [[officialResponseViewController alloc] initWithNibName:@"officialResponseViewController" bundle:nil];
-            [self presentModalViewController:controller animated:YES]; 
+            [self presentViewController:controller animated:YES completion:nil];
     
     } else {
         NSLog(@"No"); 
@@ -56,18 +68,28 @@ NSMutableData *responseData;
     NSLog(@"openPeitionsTouch");
     if (canAdvanceToNextScreen) {
         openPeitionsViewController *controller = [[openPeitionsViewController alloc] initWithNibName:@"openPeitionsViewController" bundle:nil];
-        [self presentModalViewController:controller animated:YES];
+        [self presentViewController:controller animated:YES completion:nil];
+
         
     } else {
         NSLog(@"No");
     }
 }
 
+-(IBAction)favoritePeitionsTouch:(id)sender {
+    NSLog(@"favoritePeitionsTouch");
+    UIAlertView *alert = [[UIAlertView alloc]
+                          initWithTitle:@"Not Implemented Yet" message:nil delegate:nil
+                          cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+    [alert show];
+    
+}
+
 -(IBAction)awaitingResponseTouch:(id)sender {
     NSLog(@"awitingReponseTouch");
     if (canAdvanceToNextScreen) {
-        openPeitionsViewController *controller = [[openPeitionsViewController alloc] initWithNibName:@"openPeitionsViewController" bundle:nil];
-        [self presentModalViewController:controller animated:YES];
+        awaitingResponseViewController *controller = [[awaitingResponseViewController alloc] initWithNibName:@"awaitingResponseViewController" bundle:nil];
+        [self presentViewController:controller animated:YES completion:nil];
         
     } else {
         NSLog(@"No");
@@ -87,8 +109,10 @@ NSMutableData *responseData;
     NSLog(@"downloadURL:%@", download_url);
     NSURLRequest *request = [NSURLRequest requestWithURL:download_url];
     NSLog(@"Starting Request:");
-    [[NSURLConnection alloc] initWithRequest:request delegate:self];
-    NSLog(@"Request finished:");
+    [NSURLConnection connectionWithRequest:request delegate:self];
+    
+
+    
 
 }
 
@@ -113,12 +137,13 @@ NSMutableData *responseData;
     [responseData appendData:data];
 }
 -(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
+    [spinner stopAnimating]; 
     NSLog(@"Connection Failure: %@", [error description]);
     
     NSLog(@"error: %@", error);
     UIAlertView *alert = [[UIAlertView alloc]
                           initWithTitle: @"Announcement"
-                          message: [NSString stringWithFormat:@"%d, %@", error.code, error.domain ]
+                          message: [NSString stringWithFormat:@"%d, %@", error.code,  error.localizedDescription ]//error.domain,
                           delegate: nil
                           cancelButtonTitle:@"OK"
                           otherButtonTitles:nil];
@@ -142,6 +167,7 @@ NSMutableData *responseData;
     
         
         for (int i = 0; i<[peititionListingResultsArray count]; i++) {
+            NSLog(@"<> %@", [peititionListingResultsArray objectAtIndex:i]); 
             NSLog(@"Signatures Needed:%@", [[peititionListingResultsArray objectAtIndex:i] objectForKey:@"signatures needed"]);
          
         }
@@ -152,13 +178,13 @@ NSMutableData *responseData;
     NSLog(@"total records downloaded: %d", [allPeitions count]);
     
     //Write the array to Disk
-    NSError *error; 
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *arrayPath = [documentsDirectory stringByAppendingPathComponent:@"example.dat"];
 
     [NSKeyedArchiver archiveRootObject:peititionListingResultsArray toFile:arrayPath];
     canAdvanceToNextScreen = YES;
+    [spinner stopAnimating]; 
     
     
 //    if (signaturesURLReqest) {

@@ -40,13 +40,24 @@ NSMutableArray *pickerViewArray;
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
     NSLog(@"picker row text: %@", [pickerViewArray objectAtIndex:row]); 
     
-// Handle the selection
-//    NSArray *issues = [[NSArray alloc] initWithArray:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"issues"]];
-//    for (int j =0;  j<[issues count]; j++) {
-//        NSLog(@"%@", [[issues objectAtIndex:j] objectForKey:@"name"]);
-//    }
-    
-    
+    if (row == 0) {
+        peitionTableViewArray = unfilteredPeitionTableViewArray;
+    }
+    else {
+        if ([issuesArray count] > 0) {
+        
+            [peitionTableViewArray removeAllObjects]; 
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ANY issues.name ==%@", [pickerViewArray objectAtIndex:row]];
+            [peitionTableViewArray addObjectsFromArray:[unfilteredPeitionTableViewArray filteredArrayUsingPredicate:predicate]];
+            NSArray *tempArray = [[NSArray alloc] initWithArray:[unfilteredPeitionTableViewArray filteredArrayUsingPredicate:predicate]]; 
+            NSLog(@"tempArray count: %d", [tempArray count]);
+
+            NSLog(@"peitionArrayCount: %d", [peitionTableViewArray count]); 
+            
+            
+        }
+    }
+       
     [tableView reloadData]; //Update the table
     
 }
@@ -116,11 +127,11 @@ NSMutableArray *pickerViewArray;
     cell.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1];  /*#4881b4*/
 
     // create the title label:                                             x    y   width  height
-    UILabel *peitionTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10.0, 210, 120)];
+    UILabel *peitionTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10.0, 280, 120)];
     [peitionTitleLabel setTag:1];
     [peitionTitleLabel setFont:[UIFont boldSystemFontOfSize:17.0]];
     peitionTitleLabel.textAlignment= NSTextAlignmentCenter;
-    peitionTitleLabel.textColor = [UIColor blackColor];
+    peitionTitleLabel.textColor = [UIColor whiteColor];
     peitionTitleLabel.numberOfLines = 5;
     peitionTitleLabel.layer.borderWidth = 1.0f;
     peitionTitleLabel.layer.cornerRadius= 10.0f;
@@ -133,38 +144,38 @@ NSMutableArray *pickerViewArray;
     [statusLabel setTag:4];
     [statusLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
     statusLabel.textAlignment = NSTextAlignmentLeft;
-    statusLabel.textColor = [UIColor blackColor];
+    statusLabel.textColor = [UIColor whiteColor];
     statusLabel.layer.borderWidth = 1.0f;
     statusLabel.layer.cornerRadius = 10.0f;
     statusLabel.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1];  /*#4881b4*/
     [cell.contentView addSubview:statusLabel];
     
-    //create the remaing signatures label
-    UILabel *signaturesNeededLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 160, 180, 20)];
-    [signaturesNeededLabel setTag:2];
-    [signaturesNeededLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
-    signaturesNeededLabel.textAlignment = NSTextAlignmentLeft;
-    signaturesNeededLabel.textColor = [UIColor blackColor];
-    signaturesNeededLabel.layer.borderWidth = 1.0f;
-    signaturesNeededLabel.layer.cornerRadius = 10.0f;
-    signaturesNeededLabel.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1];  /*#4881b4*/
-    [cell.contentView addSubview:signaturesNeededLabel];
+    //create the remaining signatures label
+    UILabel *signaturesCountLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 160, 180, 20)];
+    [signaturesCountLabel setTag:2];
+    [signaturesCountLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
+    signaturesCountLabel.textAlignment = NSTextAlignmentLeft;
+    signaturesCountLabel.textColor = [UIColor whiteColor];
+    signaturesCountLabel.layer.borderWidth = 1.0f;
+    signaturesCountLabel.layer.cornerRadius = 10.0f;
+    signaturesCountLabel.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1];  /*#4881b4*/
+    [cell.contentView addSubview:signaturesCountLabel];
     
     //create the time left label
     UILabel *daysLeftLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 180, 180, 20)];
     [daysLeftLabel setTag:3];
     [daysLeftLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
     daysLeftLabel.textAlignment = NSTextAlignmentLeft;
-    daysLeftLabel.textColor = [UIColor blackColor];
+    daysLeftLabel.textColor = [UIColor whiteColor];
     daysLeftLabel.layer.borderWidth = 1.0f;
     daysLeftLabel.layer.cornerRadius = 10.0f;
     daysLeftLabel.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1];  /*#4881b4*/
     [cell.contentView addSubview:daysLeftLabel];
     
     //Create the favorite switch
-    UILabel *favoriteSwitchLabel = [[UILabel alloc] initWithFrame:CGRectMake(200, 140, 180, 20)];
-    favoriteSwitchLabel.text = @"Favorite Issue"; 
-    favoriteSwitchLabel.font = [UIFont boldSystemFontOfSize:10.0];
+    UILabel *favoriteSwitchLabel = [[UILabel alloc] initWithFrame:CGRectMake(220, 140, 180, 20)];
+    favoriteSwitchLabel.text = @"Favorite"; 
+    favoriteSwitchLabel.font = [UIFont boldSystemFontOfSize:11.0];
     favoriteSwitchLabel.textColor = [UIColor blackColor]; 
     [cell.contentView addSubview:favoriteSwitchLabel];
     
@@ -172,8 +183,8 @@ NSMutableArray *pickerViewArray;
     [cell.contentView addSubview:favoriteSwitch];
     
     //display the signatures needed
-    NSString *signaturesNeededText = [NSString stringWithFormat:@"Signatures Needed:%@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"signatures needed"] ];
-    signaturesNeededLabel.text = signaturesNeededText;
+    NSString *signaturesNeededText = [NSString stringWithFormat:@"Signatures Count: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"signature count"] ];
+    signaturesCountLabel.text = signaturesNeededText;
     
     //display the peition title
     peitionTitleLabel.text = [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"title"];
@@ -194,10 +205,9 @@ NSMutableArray *pickerViewArray;
     
     NSArray *issues = [[NSArray alloc] initWithArray:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"issues"]];
     for (int j =0;  j<[issues count]; j++) {
-        NSLog(@"%@", [[issues objectAtIndex:j] objectForKey:@"name"]);
+       // NSLog(@"Cell Issues: %@", [[issues objectAtIndex:j] objectForKey:@"name"]);
     }
     
-
     return cell;
     
 }
@@ -225,29 +235,8 @@ NSMutableArray *pickerViewArray;
         }
     }
 
-}
--(void)viewDidAppear:(BOOL)animated {
-    int searchBarHeight = 40; 
-        [super viewDidAppear:animated];
-        tableView.contentOffset = CGPointMake(0, searchBarHeight);
-    
-    
-
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
-    //[webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.URLToLoad]]];
-
-
-    peitionTableViewArray = [[NSMutableArray alloc] init];
-    issuesArray = [[NSMutableArray alloc] init]; 
-    unfilteredPeitionTableViewArray = [[NSMutableArray alloc] init]; 
-    pickerViewArray = [[NSMutableArray alloc] init];
-    
     //Create pickerView array;
+    [pickerViewArray addObject:@"(none)"];
     [pickerViewArray addObject:@"Agriculture"];
     [pickerViewArray addObject:@"Arts and Humanities"];
     [pickerViewArray addObject:@"Budget and Taxes"];
@@ -285,51 +274,69 @@ NSMutableArray *pickerViewArray;
     [pickerViewArray addObject:@"Trade"];
     [pickerViewArray addObject:@"Transportation and Infrastructure"];
     [pickerViewArray addObject:@"Urban Policy"];
-    [pickerViewArray addObject:@"Veterans and Military Families"]; 
+    [pickerViewArray addObject:@"Veterans and Military Families"];
     [pickerViewArray addObject:@"Women's Issues"];
     
-    NSLog(@"pickerViewArray %d", [pickerViewArray count]); 
-       
+    NSLog(@"pickerViewArray %d", [pickerViewArray count]);
+}
+-(void)viewDidAppear:(BOOL)animated {
+    int searchBarHeight = 40; 
+        [super viewDidAppear:animated];
+        //tableView.contentOffset = CGPointMake(0, searchBarHeight);
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    //[webview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.URLToLoad]]];
+
+
+    peitionTableViewArray = [[NSMutableArray alloc] init];
+    issuesArray = [[NSMutableArray alloc] init]; 
+    unfilteredPeitionTableViewArray = [[NSMutableArray alloc] init]; 
+    pickerViewArray = [[NSMutableArray alloc] init];
+    
     UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    closeButton.frame = CGRectMake(0, 0, 60, 22);
+    closeButton.frame = CGRectMake(0, 0, 60, 44);
     [closeButton setTitle:@"Back" forState:UIControlStateNormal];
     [closeButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     closeButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
     closeButton.layer.borderColor = [UIColor blackColor].CGColor;
     closeButton.layer.borderWidth = 1.0f;
-    closeButton.layer.cornerRadius= 10.0f;
+    closeButton.layer.cornerRadius= 7.0f;
     [self.view addSubview:closeButton];
     
     UIButton *helpButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    helpButton.frame = CGRectMake(260, 0, 60, 22);
+    helpButton.frame = CGRectMake(260, 0, 60, 44);
     [helpButton setTitle:@"Help" forState:UIControlStateNormal];
     [helpButton addTarget:self action:@selector(helpButtonTouched:) forControlEvents:UIControlEventTouchUpInside];
     helpButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
     helpButton.layer.borderColor = [UIColor blackColor].CGColor;
     helpButton.layer.borderWidth = 1.0f; 
-    helpButton.layer.cornerRadius = 10.0f;
+    helpButton.layer.cornerRadius = 7.0f;
     [self.view addSubview:helpButton]; 
     
     
     UIButton *filterButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    filterButton.frame = CGRectMake(60, 20, 200, 22);
+    filterButton.frame = CGRectMake(62, 20, 196, 24);
     [filterButton setTitle:@"Filter" forState:UIControlStateNormal];
     [filterButton addTarget:self action:@selector(filterButtonTouched:) forControlEvents:UIControlEventTouchUpInside];
     filterButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
     filterButton.layer.borderColor = [UIColor blackColor].CGColor;
     filterButton.layer.borderWidth = 1.0f;
-    filterButton.layer.cornerRadius= 10.0f;
+    filterButton.layer.cornerRadius= 6.0f;
     [self.view addSubview:filterButton];
     
 
     //Setup the Search Bar
-    UISearchBar *searchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-    searchBar.barStyle=UIBarStyleBlackTranslucent;
-    searchBar.showsCancelButton=YES;
-    searchBar.autocorrectionType=UITextAutocorrectionTypeNo;
-    searchBar.autocapitalizationType=UITextAutocapitalizationTypeNone;
-    searchBar.delegate=self;
-    self.tableView.tableHeaderView=searchBar;
+//    UISearchBar *searchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
+//    searchBar.barStyle=UIBarStyleBlackTranslucent;
+//    searchBar.showsCancelButton=YES;
+//    searchBar.autocorrectionType=UITextAutocorrectionTypeNo;
+//    searchBar.autocapitalizationType=UITextAutocapitalizationTypeNone;
+//    searchBar.delegate=self;
+//    self.tableView.tableHeaderView=searchBar;
     
     //Setup the PickerView 
     UIPickerView *pickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 44, 320, 200)];
