@@ -18,8 +18,6 @@ An Unoffical White House We the People peition iPhone app.
 
 This is an example iPhone app that can be extended by any iPhone Developer who is familar with Objective-C.
 
-
-
 ## Usage
 
 ### A copy of the app will be in the Apple App Store, at the following URL when it is released: https://itunes.apple.com/us/app/wethepeople/id607912542?ls=1&mt=8
@@ -41,7 +39,7 @@ This is an example iPhone app that can be extended by any iPhone Developer who i
   $ pod install  
   $ open WeThePeople.xcworkspace
 
-  If you don't want to use CocoaPods, feel free to download the SBJson library from stig.github.com/json-framework/ and then add it to your app following the directions listed at this address. http://superloopy.io/json-framework/api/3.2/
+  If you don't want to use CocoaPods, feel free to download the SBJson library from http://stig.github.com/json-framework/ and then add it to your app following the directions listed at this address. http://superloopy.io/json-framework/api/3.2/
 
 
 
@@ -55,11 +53,6 @@ This is an example iPhone app that can be extended by any iPhone Developer who i
 
 ## Developers
 
-  This widget requires you to know a specific petition ID.  At the time of this release, the only way to look up a specific petition ID is by using the API. To view all
-  petitions and their IDs, you can visit:
-
-    https://petitions.whitehouse.gov/api/v1/petitions.json?key=aVmupNPJmgkweR9
-
   Detailed documentation about the We the People API is available here:
 
     https://petitions.whitehouse.gov/developers 
@@ -69,3 +62,4 @@ This is an example iPhone app that can be extended by any iPhone Developer who i
 ## Authors / Maintainers
 
   This example was developed by Robert Eickmann, roberte3@gmail.com 
+  Initial launch image created by Ivan Cockrum, www.cockrumville.com 
