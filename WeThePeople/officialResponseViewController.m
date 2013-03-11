@@ -430,7 +430,11 @@ UIActivityIndicatorView *spinner;
 }
 
 -(IBAction)helpButtonTouched:(id)sender {
-    NSLog(@"Help Button Clicked"); 
+    NSLog(@"Help Button Clicked");
+    UIAlertView *alert = [[UIAlertView alloc]
+                          initWithTitle:@"Not Implemented Yet" message:nil delegate:nil
+                          cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+    [alert show];
 }
 
 - (void)didReceiveMemoryWarning
