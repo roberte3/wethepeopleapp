@@ -22,6 +22,11 @@ NSMutableArray *pickerViewArray;
 
 @synthesize tableView;
 
+UIWebView *webView;
+UIButton *browswerCloseButton;
+UIButton *zoomButton;
+UIActivityIndicatorView *spinner;
+
 -(IBAction)backButtonClick:(id)sender {
     [self dismissViewControllerAnimated:YES completion:nil];
 }
@@ -105,49 +110,36 @@ NSMutableArray *pickerViewArray;
             NSLog(@"responded");
         }
     }
-    //Create pickerView array;
-    [pickerViewArray addObject:@"(none)"];
-    [pickerViewArray addObject:@"Agriculture"];
-    [pickerViewArray addObject:@"Arts and Humanities"];
-    [pickerViewArray addObject:@"Budget and Taxes"];
-    [pickerViewArray addObject:@"Civil Rights and Liberties"];
-    [pickerViewArray addObject:@"Climate Change"];
-    [pickerViewArray addObject:@"Consumer Protections"];
-    [pickerViewArray addObject:@"Criminal Justice and Law Enforcement"];
-    [pickerViewArray addObject:@"Defense"];
-    [pickerViewArray addObject:@"Disabilities"];
-    [pickerViewArray addObject:@"Economy"];
-    [pickerViewArray addObject:@"Education"];
-    [pickerViewArray addObject:@"Energy"];
-    [pickerViewArray addObject:@"Environment"];
-    [pickerViewArray addObject:@"Family"];
-    [pickerViewArray addObject:@"Firearms"];
-    [pickerViewArray addObject:@"Foreign Policy"];
-    [pickerViewArray addObject:@"Government Reform"];
-    [pickerViewArray addObject:@"Health Care"];
-    [pickerViewArray addObject:@"Homeland Security and Disaster Relief"];
-    [pickerViewArray addObject:@"Housing"];
-    [pickerViewArray addObject:@"Human Rights"];
-    [pickerViewArray addObject:@"Immigration"];
-    [pickerViewArray addObject:@"Innovation"];
-    [pickerViewArray addObject:@"Job Creation"];
-    [pickerViewArray addObject:@"Labor"];
-    [pickerViewArray addObject:@"Natural Resources"];
-    [pickerViewArray addObject:@"Postal Service"];
-    [pickerViewArray addObject:@"Poverty"];
-    [pickerViewArray addObject:@"Regulatory Reform"];
-    [pickerViewArray addObject:@"Rural Policy"];
-    [pickerViewArray addObject:@"Science and Space Policy"];
-    [pickerViewArray addObject:@"Small Business"];
-    [pickerViewArray addObject:@"Social Security"];
-    [pickerViewArray addObject:@"Technology and Telecommunications"];
-    [pickerViewArray addObject:@"Trade"];
-    [pickerViewArray addObject:@"Transportation and Infrastructure"];
-    [pickerViewArray addObject:@"Urban Policy"];
-    [pickerViewArray addObject:@"Veterans and Military Families"];
-    [pickerViewArray addObject:@"Women's Issues"];
     
-    NSLog(@"pickerViewArray %d", [pickerViewArray count]);
+    //Create pickerView array;
+    
+    //Becuse they can add new topic types beyond the first 29, we dynamically build a mutableArray of alphabetaically sorted
+    //issue types to display for the UIPickerView.
+    
+    [pickerViewArray addObject:@"(none)"];
+    
+    NSMutableSet *pickerDisplaySet = [[NSMutableSet alloc] init]; //Temp Set for sorting.
+    NSMutableArray *tempPickerArray = [[NSMutableArray alloc] init];
+    
+    for (int i=0; i<[unfilteredPeitionTableViewArray count]; i++) {
+        NSMutableArray *tmpArray = [[unfilteredPeitionTableViewArray objectAtIndex:i] objectForKey:@"issues"];
+        
+        for (int j=0; j<[tmpArray count]; j++) {
+            [pickerDisplaySet addObject:[[tmpArray objectAtIndex:j]objectForKey:@"name"]];
+        }
+    }
+    NSLog(@"pickerDisplaySet: %@", pickerDisplaySet);
+    for(id element in pickerDisplaySet) {
+        NSLog(@"element:%@", element);
+        [tempPickerArray addObject:element];
+    }
+    NSSortDescriptor *nameSorter = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES selector:@selector(caseInsensitiveCompare:)];
+    [tempPickerArray sortUsingDescriptors:[NSArray arrayWithObject:nameSorter]]; //Everything should be a string and sorted Alpha
+    
+    [pickerViewArray addObjectsFromArray:tempPickerArray];
+    NSLog(@"pickerViewArray Count:%d", [pickerViewArray count]);
+
+    
     
 }
 
@@ -221,9 +213,45 @@ NSMutableArray *pickerViewArray;
     NSLog(@"Issue URL: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"url" ]);
     
     NSURL *url = [ [ NSURL alloc ] initWithString:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"url"] ];
-    [[UIApplication sharedApplication] openURL:url];
-    WebViewController *viewController = [[WebViewController alloc] initWithNibName:@"WebViewController" bundle:nil];
-    [self.navigationController pushViewController:viewController animated:YES];
+    
+    
+    
+    webView = [[UIWebView alloc] initWithFrame:self.view.bounds];  //Change self.view.bounds to a smaller CGRect if you don't want it to take up the whole screen
+    [webView loadRequest:[NSURLRequest requestWithURL:url]];
+    webView.scalesPageToFit = YES;
+    webView.delegate  = self;
+    
+    [self.view addSubview:webView];
+    
+    spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    
+    spinner = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    spinner.frame = CGRectMake(0.0, 0.0, 80.0, 80.0);
+    spinner.center = self.view.center;
+    [self.view addSubview: spinner];
+    [self.view bringSubviewToFront:spinner];
+    
+    
+    browswerCloseButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    browswerCloseButton.frame = CGRectMake(0, 0, 60, 44);
+    [browswerCloseButton setTitle:@"Back" forState:UIControlStateNormal];
+    [browswerCloseButton addTarget:self action:@selector(browserCloseClick:) forControlEvents:UIControlEventTouchUpInside];
+    browswerCloseButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
+    browswerCloseButton.layer.borderColor = [UIColor blackColor].CGColor;
+    browswerCloseButton.layer.borderWidth = 1.0f;
+    browswerCloseButton.layer.cornerRadius= 7.0f;
+    [self.view addSubview:browswerCloseButton];
+    
+    zoomButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    zoomButton.frame = CGRectMake(240, 400, 60, 44);
+    [zoomButton setTitle:@"Zoom" forState:UIControlStateNormal];
+    [zoomButton addTarget:self action:@selector(resizeWebView:) forControlEvents:UIControlEventTouchUpInside];
+    zoomButton.layer.borderColor = [UIColor blackColor].CGColor;
+    zoomButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
+    zoomButton.layer.borderWidth = 1.0f;
+    zoomButton.layer.cornerRadius= 7.0f;
+    [self.view addSubview:zoomButton];
+
     
 }
 
@@ -517,6 +545,28 @@ NSMutableArray *pickerViewArray;
     NSLog(@"Help Button Clicked");
 }
 
+#pragma mark WebView Code 
+
+- (void)webViewDidStartLoad:(UIWebView *)webView {
+    [spinner startAnimating];
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView {
+    [spinner stopAnimating];
+    [spinner removeFromSuperview];
+}
+
+-(IBAction)resizeWebView:(id)sender {
+    NSLog(@"resizeWebView");
+    NSString *jsCommand = [NSString stringWithFormat:@"document.body.style.zoom = .5;"];
+    [webView stringByEvaluatingJavaScriptFromString:jsCommand];
+}
+-(IBAction)browserCloseClick:(id)sender {
+    [zoomButton removeFromSuperview];
+    [browswerCloseButton removeFromSuperview];
+    [webView removeFromSuperview];
+    
+}
 
 
 

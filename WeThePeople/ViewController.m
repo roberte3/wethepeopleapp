@@ -38,11 +38,10 @@ NSMutableData *responseData;
 
     allPeitions = [[NSMutableArray alloc] init]; 
     responseData = [NSMutableData data]; //Download temp cache.
-    spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     
-    spinner = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    spinner.frame = CGRectMake(0.0, 0.0, 80.0, 80.0);
-    spinner.center = self.view.center;
+    spinner = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    spinner.frame = CGRectMake(0, 0, 80.0, 80.0);
+    spinner.center = CGPointMake(160, 120);
     [self.view addSubview: spinner];
     [self.view bringSubviewToFront:spinner];
     [spinner startAnimating]; 
@@ -160,7 +159,7 @@ NSMutableData *responseData;
     
         NSString *responseString = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
         NSString *response = responseString;
-//NSLog(@"%@", responseString);
+//NSLog(@"ResponseString: %@", responseString);
         SBJsonParser *parser = [[SBJsonParser alloc] init];
         NSDictionary *peitionsDict = [parser objectWithString:response]; 
         peititionListingResultsArray =  [peitionsDict objectForKey:@"results"];
