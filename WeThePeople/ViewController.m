@@ -10,6 +10,7 @@
 #import "officialResponseViewController.h" 
 #import "openPeitionsViewController.h" 
 #import "awaitingResponseViewController.h" 
+#import "FavoritePetitionsViewController.h" 
 
 @interface ViewController ()
 
@@ -77,10 +78,16 @@ NSMutableData *responseData;
 
 -(IBAction)favoritePeitionsTouch:(id)sender {
     NSLog(@"favoritePeitionsTouch");
-    UIAlertView *alert = [[UIAlertView alloc]
-                          initWithTitle:@"Not Implemented Yet" message:nil delegate:nil
-                          cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-    [alert show];
+
+    if (canAdvanceToNextScreen) {
+        FavoritePetitionsViewController *controller = [[FavoritePetitionsViewController alloc] initWithNibName:@"FavoritePetitionsViewController" bundle:nil];
+        [self presentViewController:controller animated:YES completion:nil];
+        
+        
+    } else {
+        NSLog(@"No");
+    }
+    
     
 }
 

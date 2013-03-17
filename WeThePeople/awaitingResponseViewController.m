@@ -22,7 +22,7 @@ NSMutableArray *pickerViewArray;
 @synthesize tableView; 
 
 UIWebView *webView;
-UIButton *browswerCloseButton;
+UIButton *browserCloseButton;
 UIButton *zoomButton;
 UIActivityIndicatorView *spinner;
 
@@ -231,15 +231,15 @@ UIActivityIndicatorView *spinner;
     [self.view bringSubviewToFront:spinner];
     
     
-    browswerCloseButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    browswerCloseButton.frame = CGRectMake(0, 0, 60, 44);
-    [browswerCloseButton setTitle:@"Back" forState:UIControlStateNormal];
-    [browswerCloseButton addTarget:self action:@selector(browserCloseClick:) forControlEvents:UIControlEventTouchUpInside];
-    browswerCloseButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
-    browswerCloseButton.layer.borderColor = [UIColor blackColor].CGColor;
-    browswerCloseButton.layer.borderWidth = 1.0f;
-    browswerCloseButton.layer.cornerRadius= 7.0f;
-    [self.view addSubview:browswerCloseButton];
+    browserCloseButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    browserCloseButton.frame = CGRectMake(0, 0, 60, 44);
+    [browserCloseButton setTitle:@"Back" forState:UIControlStateNormal];
+    [browserCloseButton addTarget:self action:@selector(browserCloseClick:) forControlEvents:UIControlEventTouchUpInside];
+    browserCloseButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
+    browserCloseButton.layer.borderColor = [UIColor blackColor].CGColor;
+    browserCloseButton.layer.borderWidth = 1.0f;
+    browserCloseButton.layer.cornerRadius= 7.0f;
+    [self.view addSubview:browserCloseButton];
     
     zoomButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     zoomButton.frame = CGRectMake(240, 400, 60, 44);
@@ -528,7 +528,7 @@ UIActivityIndicatorView *spinner;
 }
 -(IBAction)browserCloseClick:(id)sender {
     [zoomButton removeFromSuperview];
-    [browswerCloseButton removeFromSuperview];
+    [browserCloseButton removeFromSuperview];
     [webView removeFromSuperview];
     
 }
@@ -569,7 +569,8 @@ UIActivityIndicatorView *spinner;
     UIAlertView *alert = [[UIAlertView alloc]
                           initWithTitle:@"Not Implemented Yet" message:nil delegate:nil
                           cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-    [alert show];}
+    [alert show];
+}
 
 
 - (void)didReceiveMemoryWarning
