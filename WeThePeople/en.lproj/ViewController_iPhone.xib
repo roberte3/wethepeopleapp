@@ -142,7 +142,7 @@
 						<int key="IBUIContentHorizontalAlignment">0</int>
 						<int key="IBUIContentVerticalAlignment">0</int>
 						<int key="IBUIButtonType">1</int>
-						<string key="IBUINormalTitle">Stared Peitions</string>
+						<string key="IBUINormalTitle">Favorited Peitions</string>
 						<reference key="IBUIHighlightedTitleColor" ref="452325396"/>
 						<object class="NSColor" key="IBUINormalTitleColor">
 							<int key="NSColorSpace">1</int>
@@ -268,6 +268,14 @@
 					<int key="connectionID">36</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">favoritePeitionsButton</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="1008267098"/>
+					</object>
+					<int key="connectionID">145</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
 						<string key="label">officialResponseTouch:</string>
 						<reference key="source" ref="330833805"/>
@@ -391,7 +399,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">143</int>
+			<int key="maxID">145</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -404,6 +412,7 @@
 						<string key="initialPetitionsDownload:">id</string>
 						<string key="officialResponseTouch:">id</string>
 						<string key="openPeitionsTouch:">id</string>
+						<string key="retryInternetButtonTouch:">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
 						<object class="IBActionInfo" key="awaitingResponseTouch:">
@@ -426,20 +435,25 @@
 							<string key="name">openPeitionsTouch:</string>
 							<string key="candidateClassName">id</string>
 						</object>
+						<object class="IBActionInfo" key="retryInternetButtonTouch:">
+							<string key="name">retryInternetButtonTouch:</string>
+							<string key="candidateClassName">id</string>
+						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="awaitingResponseButton">UIButton</string>
-						<string key="favortiePeitionsButton">UIButton</string>
+						<string key="favoritePeitionsButton">UIButton</string>
 						<string key="officialResponseButton">UIButton</string>
 						<string key="openPeitionsButton">UIButton</string>
+						<string key="retryInternetButton">UIButton</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="awaitingResponseButton">
 							<string key="name">awaitingResponseButton</string>
 							<string key="candidateClassName">UIButton</string>
 						</object>
-						<object class="IBToOneOutletInfo" key="favortiePeitionsButton">
-							<string key="name">favortiePeitionsButton</string>
+						<object class="IBToOneOutletInfo" key="favoritePeitionsButton">
+							<string key="name">favoritePeitionsButton</string>
 							<string key="candidateClassName">UIButton</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="officialResponseButton">
@@ -448,6 +462,10 @@
 						</object>
 						<object class="IBToOneOutletInfo" key="openPeitionsButton">
 							<string key="name">openPeitionsButton</string>
+							<string key="candidateClassName">UIButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="retryInternetButton">
+							<string key="name">retryInternetButton</string>
 							<string key="candidateClassName">UIButton</string>
 						</object>
 					</dictionary>

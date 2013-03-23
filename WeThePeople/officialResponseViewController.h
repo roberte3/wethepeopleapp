@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "WebViewController.h" 
+#import "prefs.h" 
 
 
 @interface officialResponseViewController : UIViewController <UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate, UIWebViewDelegate> {
@@ -19,6 +20,7 @@
 }
 
 @property (nonatomic, retain) IBOutlet UITableView *tableView;
+@property (nonatomic, retain) IBOutlet UISwitch *tableswitch;
 
 
 @end

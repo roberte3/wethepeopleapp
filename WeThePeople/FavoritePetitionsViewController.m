@@ -27,20 +27,34 @@ NSMutableArray *peitionTableViewArray;
 -(void)viewWillAppear:(BOOL)animated {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *arrayPath = [documentsDirectory stringByAppendingPathComponent:@"example.dat"];
+    NSString *arrayPath = [documentsDirectory stringByAppendingPathComponent:@"peitions.dat"];
     
     NSMutableArray *issueSorter = [[NSMutableArray alloc] init];
     issueSorter = [NSKeyedUnarchiver unarchiveObjectWithFile:arrayPath];
     
+ 
+    
+    NSMutableArray *openPeitionsArray = [[NSMutableArray alloc] init];
+    NSMutableArray *respondedPeitionsArray = [[NSMutableArray alloc] init];
+    NSMutableArray *peitionsAwaitingResponseArray = [[NSMutableArray alloc] init]; 
+    
+    
+    
     for (int i = 0; i<[issueSorter count]; i++ ) {
         if ([[[issueSorter objectAtIndex:i] objectForKey:@"status"] isEqual: @"open"] && [[[issueSorter objectAtIndex:i] objectForKey:@"signatures needed"] integerValue] >0 ) {
-            [peitionTableViewArray addObject:[issueSorter objectAtIndex:i]];
-            //[unfilteredPeitionTableViewArray addObject:[issueSorter objectAtIndex:i]];
+            [openPeitionsArray addObject:[issueSorter objectAtIndex:i]];
             
-        } else {
-            NSLog(@"responded");
+        } else if ([[[issueSorter objectAtIndex:i] objectForKey:@"status"] isEqual: @"responded"]){
+            [respondedPeitionsArray addObject:[issueSorter objectAtIndex:i]];
+        } else if  ([[[issueSorter objectAtIndex:i] objectForKey:@"status"] isEqual: @"pending response"] && [[[issueSorter objectAtIndex:i] objectForKey:@"signatures needed"] integerValue] ==0 ){
+            [peitionsAwaitingResponseArray  addObject:[issueSorter objectAtIndex:i]]; 
+        }
+        
+        else {
+            NSLog(@"Other:Shouldn't Happen");
         }
     }
+
     
 }
 
@@ -54,7 +68,7 @@ NSMutableArray *peitionTableViewArray;
     if (self) {
         // Custom initialization
     }
-    return self;
+    return self;    
 }
 
 - (void)viewDidLoad
@@ -63,7 +77,7 @@ NSMutableArray *peitionTableViewArray;
     peitionTableViewArray = [[NSMutableArray alloc] init];
     
     UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    closeButton.frame = CGRectMake(0, 0, 60, 44);
+    closeButton.frame = CGRectMake(0, 0, 60, buttonHeight);
     [closeButton setTitle:@"Back" forState:UIControlStateNormal];
     [closeButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     closeButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
@@ -72,20 +86,21 @@ NSMutableArray *peitionTableViewArray;
     closeButton.layer.cornerRadius= 7.0f;
     [self.view addSubview:closeButton];
     
-    UIButton *helpButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    helpButton.frame = CGRectMake(260, 0, 60, 44);
-    [helpButton setTitle:@"Help" forState:UIControlStateNormal];
-    [helpButton addTarget:self action:@selector(helpButtonTouched:) forControlEvents:UIControlEventTouchUpInside];
-    helpButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
-    helpButton.layer.borderColor = [UIColor blackColor].CGColor;
-    helpButton.layer.borderWidth = 1.0f;
-    helpButton.layer.cornerRadius = 7.0f;
-    [self.view addSubview:helpButton];
+    UIButton *notificationSettings = [UIButton buttonWithType:UIButtonTypeCustom];
+    notificationSettings.frame = CGRectMake(260, 0, 60, buttonHeight);
+    UIImage *gearImageView =[UIImage imageNamed:@"gear.png"];
+    [notificationSettings setBackgroundImage:gearImageView forState:UIControlStateNormal];
+    [notificationSettings addTarget:self action:@selector(notificationSettingsButtonTouch:) forControlEvents:UIControlEventTouchUpInside];
+    notificationSettings.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
+    notificationSettings.layer.borderColor = [UIColor blackColor].CGColor;
+    notificationSettings.layer.borderWidth = 1.0f;
+    notificationSettings.layer.cornerRadius = 7.0f;
+    [self.view addSubview:notificationSettings];
     
     // Do any additional setup after loading the view from its nib.
 }
 
--(IBAction)helpButtonTouched:(id)sender {
+-(IBAction)notificationSettingsButtonTouch:(id)sender {
     UIAlertView *alert = [[UIAlertView alloc]
                           initWithTitle:@"Not Implemented Yet" message:nil delegate:nil
                           cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
@@ -129,7 +144,7 @@ NSMutableArray *peitionTableViewArray;
     
     
     browserCloseButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    browserCloseButton.frame = CGRectMake(0, 0, 60, 44);
+    browserCloseButton.frame = CGRectMake(0, 0, 60, buttonHeight);
     [browserCloseButton setTitle:@"Back" forState:UIControlStateNormal];
     [browserCloseButton addTarget:self action:@selector(browserCloseClick:) forControlEvents:UIControlEventTouchUpInside];
     browserCloseButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
@@ -139,7 +154,7 @@ NSMutableArray *peitionTableViewArray;
     [self.view addSubview:browserCloseButton];
     
     zoomButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    zoomButton.frame = CGRectMake(240, 400, 60, 44);
+    zoomButton.frame = CGRectMake(260, ([[UIScreen mainScreen] applicationFrame].size.height -buttonHeight), 60, buttonHeight);
     [zoomButton setTitle:@"Zoom" forState:UIControlStateNormal];
     [zoomButton addTarget:self action:@selector(resizeWebView:) forControlEvents:UIControlEventTouchUpInside];
     zoomButton.layer.borderColor = [UIColor blackColor].CGColor;
@@ -164,15 +179,16 @@ NSMutableArray *peitionTableViewArray;
 }
 
 
--(NSInteger)numberOfSectionsInTableView:(UITableView *)searchTableView {
-    return 1;
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 3;
 }
+
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [peitionTableViewArray count];
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *sectionHeaderView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 100, 44)];
+    UIView *sectionHeaderView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 100, buttonHeight)];
     
     return sectionHeaderView;
 }
@@ -234,6 +250,8 @@ NSMutableArray *peitionTableViewArray;
     [cell.contentView addSubview:favoriteSwitchLabel];
     
     UISwitch *favoriteSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(200, 160, 180, 20)];
+    favoriteSwitch.tag = indexPath.row;
+    [favoriteSwitch addTarget:self action:@selector(updateSwitchAtIndexPath:) forControlEvents:UIControlEventTouchUpInside];
     [cell.contentView addSubview:favoriteSwitch];
     
     //display the signatures needed
@@ -264,6 +282,12 @@ NSMutableArray *peitionTableViewArray;
     
     return cell;
     
+}
+
+-(void)updateSwitchAtIndexPath:(UISwitch *)aswitch {
+        NSLog(@"Row %i", aswitch.tag);
+        
+
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section

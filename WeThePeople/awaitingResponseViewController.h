@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "prefs.h"
 
 @interface awaitingResponseViewController : UIViewController <UITableViewDataSource, UITableViewDelegate> {
     UITableView *tableView;

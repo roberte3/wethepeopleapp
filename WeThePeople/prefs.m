@@ -20,6 +20,9 @@ NSString * const SERVER_NAME = @"petitions.whitehouse.gov";
 NSString * const ACCESS_CODE = @"uNa6aXLQaUcBxsW";
 NSString * const SIGNATURES_URL = @"https://petitions.whitehouse.gov/api/v1/petitions/";
 
+int buttonHeight =44;
+
+
 
 //NSString * const SIGNATURES_URL = @"https://petitions.whitehouse.gov/api/v1/petitions/51210a5beab72a3b6f000006/signatures.json?key=uNa6aXLQaUcBxsW&limit=100&offset=0";
 

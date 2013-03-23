@@ -14,6 +14,7 @@ extern NSString * const SERVER_NAME;
 extern NSString * const ACCESS_CODE;
 extern NSString * const PETITIONS_URL;
 extern NSString * const SIGNATURES_URL;
+extern int buttonHeight; 
 
 
 

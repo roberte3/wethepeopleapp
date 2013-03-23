@@ -20,25 +20,38 @@
 @synthesize openPeitionsButton;
 @synthesize officialResponseButton; 
 @synthesize awaitingResponseButton;
-@synthesize favortiePeitionsButton; 
+@synthesize favoritePeitionsButton;
+@synthesize retryInternetButton; 
 
 int currentPeitionsDownloadIncrementer = 0;
 int secondaryDownloadCount = 0;
 bool canAdvanceToNextScreen = FALSE;
+bool failedConnection = FALSE;
 NSMutableArray *allPeitions;
+NSMutableArray *favoritePeitions; 
 
 UIActivityIndicatorView *spinner; 
 
 
-NSMutableData *responseData; 
+NSMutableData *responseData;
+
+
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1]; /*#4881b4* aka the color from the official WH app. */
 
-    allPeitions = [[NSMutableArray alloc] init]; 
+    allPeitions = [[NSMutableArray alloc] init];
+    favoritePeitions = [[NSMutableArray alloc] init];
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *favoriteIssuePath = [documentsDirectory stringByAppendingString:@"favorite.dat"];
+    favoritePeitions = [NSKeyedUnarchiver unarchiveObjectWithFile:favoriteIssuePath];
+
     responseData = [NSMutableData data]; //Download temp cache.
+    
     
     spinner = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     spinner.frame = CGRectMake(0, 0, 80.0, 80.0);
@@ -79,13 +92,17 @@ NSMutableData *responseData;
 -(IBAction)favoritePeitionsTouch:(id)sender {
     NSLog(@"favoritePeitionsTouch");
 
-    if (canAdvanceToNextScreen) {
+    if (canAdvanceToNextScreen && [favoritePeitions count] > 0) {
         FavoritePetitionsViewController *controller = [[FavoritePetitionsViewController alloc] initWithNibName:@"FavoritePetitionsViewController" bundle:nil];
         [self presentViewController:controller animated:YES completion:nil];
         
         
     } else {
         NSLog(@"No");
+        UIAlertView *alert = [[UIAlertView alloc]
+                              initWithTitle:@"Favorite a peition to get notifications, and view this screen. " message:nil delegate:nil
+                              cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+        [alert show];
     }
     
     
@@ -99,6 +116,7 @@ NSMutableData *responseData;
         
     } else {
         NSLog(@"No");
+
     }
 }
 
@@ -147,14 +165,48 @@ NSMutableData *responseData;
     NSLog(@"Connection Failure: %@", [error description]);
     
     NSLog(@"error: %@", error);
-    UIAlertView *alert = [[UIAlertView alloc]
-                          initWithTitle: @"Announcement"
-                          message: [NSString stringWithFormat:@"%d, %@", error.code,  error.localizedDescription ]//error.domain,
-                          delegate: nil
-                          cancelButtonTitle:@"OK"
-                          otherButtonTitles:nil];
-    [alert show];
     
+    if (error.code == -1009) {
+        UIAlertView *alert = [[UIAlertView alloc]
+                              initWithTitle: @"Announcement"
+                              message: @"No Internet Connection, please check your device for a working internet connection"
+                              delegate: nil
+                              cancelButtonTitle:@"OK"
+                              otherButtonTitles:nil];
+        [alert show];    } else {
+            UIAlertView *alert = [[UIAlertView alloc]
+                                  initWithTitle: @"Announcement"
+                                  message: [NSString stringWithFormat:@"%d, %@", error.code,  error.localizedDescription ]//error.domain,
+                                  delegate: nil
+                                  cancelButtonTitle:@"OK"
+                                  otherButtonTitles:nil];
+            [alert show];
+        }
+
+
+    retryInternetButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    retryInternetButton.frame = CGRectMake(116, 200, 88, 88);
+    [retryInternetButton setTitle:@"retry" forState:UIControlStateNormal];
+    [retryInternetButton addTarget:self action:@selector(retryInternetButtonTouch:) forControlEvents:UIControlEventTouchUpInside];
+    retryInternetButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
+    retryInternetButton.layer.borderColor = [UIColor blackColor].CGColor;
+    retryInternetButton.layer.borderWidth = 1.0f;
+    retryInternetButton.layer.cornerRadius= 7.0f;
+    [self.view addSubview:retryInternetButton];
+    
+    [officialResponseButton setHidden:YES];
+    [openPeitionsButton setHidden:YES];
+    [awaitingResponseButton setHidden:YES];
+    [favoritePeitionsButton setHidden:YES]; 
+}
+
+-(IBAction)retryInternetButtonTouch:(id)sender {
+    [self initialPetitionsDownload:self];
+    [retryInternetButton setHidden:YES];
+    [officialResponseButton setHidden:NO];
+    [openPeitionsButton setHidden:NO];
+    [awaitingResponseButton setHidden:NO];
+    [favoritePeitionsButton setHidden:NO]; 
 }
 
 
@@ -186,11 +238,11 @@ NSMutableData *responseData;
     //Write the array to Disk
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *arrayPath = [documentsDirectory stringByAppendingPathComponent:@"example.dat"];
+    NSString *arrayPath = [documentsDirectory stringByAppendingPathComponent:@"peitions.dat"];
 
     [NSKeyedArchiver archiveRootObject:peititionListingResultsArray toFile:arrayPath];
     canAdvanceToNextScreen = YES;
-    [spinner stopAnimating]; 
+    [spinner stopAnimating];
     
     
 //    if (signaturesURLReqest) {

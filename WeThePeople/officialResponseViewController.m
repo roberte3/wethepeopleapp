@@ -22,6 +22,8 @@ NSMutableArray *peitionTableViewArray;
 NSMutableArray *unfilteredPeitionTableViewArray;
 NSMutableArray *issuesArray;
 NSMutableArray *pickerViewArray;
+NSMutableArray *favoriteIssuesArray;
+NSMutableSet  *favoriteIssuesSet;
 
 UIWebView *webView;
 UIButton *browserCloseButton;
@@ -98,6 +100,19 @@ UIActivityIndicatorView *spinner;
 
 #pragma mark tableView Code
 
+-(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    NSString *title;
+    if (section == 0) {
+        title = [NSString stringWithFormat:@"Peitions With Response"];
+    }else if (section == 1) {
+        title = [NSString stringWithFormat:@"Open Peitions"];
+    }else if (section ==2) {
+        title = [NSString stringWithFormat:@"Peitions Awaiting Response"]; 
+    }
+    
+    return title;
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // determine the selected data from the IndexPath.row
     
@@ -126,7 +141,7 @@ UIActivityIndicatorView *spinner;
     
     
     browserCloseButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    browserCloseButton.frame = CGRectMake(0, 0, 60, 44);
+    browserCloseButton.frame = CGRectMake(0, 0, 60, buttonHeight);
     [browserCloseButton setTitle:@"Back" forState:UIControlStateNormal];
     [browserCloseButton addTarget:self action:@selector(browserCloseClick:) forControlEvents:UIControlEventTouchUpInside];
     browserCloseButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
@@ -136,7 +151,7 @@ UIActivityIndicatorView *spinner;
     [self.view addSubview:browserCloseButton];
     
     zoomButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    zoomButton.frame = CGRectMake(240, 400, 60, 44);
+    zoomButton.frame = CGRectMake(260, ([[UIScreen mainScreen] applicationFrame].size.height -buttonHeight), 60, buttonHeight);
     [zoomButton setTitle:@"Zoom" forState:UIControlStateNormal];
     [zoomButton addTarget:self action:@selector(resizeWebView:) forControlEvents:UIControlEventTouchUpInside];
     zoomButton.layer.borderColor = [UIColor blackColor].CGColor;
@@ -156,7 +171,7 @@ UIActivityIndicatorView *spinner;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *sectionHeaderView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 100, 44)];
+    UIView *sectionHeaderView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 100, buttonHeight)];
     
     return sectionHeaderView;
 }
@@ -220,6 +235,8 @@ UIActivityIndicatorView *spinner;
     [cell.contentView addSubview:favoriteSwitchLabel];
     
     UISwitch *favoriteSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(200, 160, 180, 20)];
+    favoriteSwitch.tag = indexPath.row;
+    [favoriteSwitch addTarget:self action:@selector(updateSwitchAtIndexPath:) forControlEvents:UIControlEventTouchUpInside];
     [cell.contentView addSubview:favoriteSwitch];
     
     //display the signatures needed
@@ -241,12 +258,16 @@ UIActivityIndicatorView *spinner;
     int numberOfDays = diff / 86400;
     daysLeftLabel.text = [NSString stringWithFormat:@"%d days left on petition", numberOfDays];
     
+    if ( [favoriteIssuesSet containsObject:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"id"]]) {
+    [favoriteSwitch setOn:YES];
+    }
+    
+    NSLog(@"MakeCell ID: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"id"]);
+    NSLog(@"MakeCell set: %@", favoriteIssuesSet); 
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
-    NSArray *issues = [[NSArray alloc] initWithArray:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"issues"]];
-    for (int j =0;  j<[issues count]; j++) {
-       // NSLog(@"Cell Issues: %@", [[issues objectAtIndex:j] objectForKey:@"name"]);
-    }
+
+
     
     return cell;
     
@@ -263,11 +284,27 @@ UIActivityIndicatorView *spinner;
 -(void)viewWillAppear:(BOOL)animated {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *arrayPath = [documentsDirectory stringByAppendingPathComponent:@"example.dat"];
+    NSString *arrayPath = [documentsDirectory stringByAppendingPathComponent:@"peitions.dat"];
+    NSString *favoriteIssuePath = [documentsDirectory stringByAppendingString:@"favorite.dat"]; 
     
-    NSMutableArray *issueSorter = [[NSMutableArray alloc] init]; 
-    issueSorter = [NSKeyedUnarchiver unarchiveObjectWithFile:arrayPath];
+    favoriteIssuesArray = [[NSMutableArray alloc] init];
+    NSMutableArray *tempArray =[[NSMutableArray alloc] initWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:@"favoriteIssuePath"]];
+    if ([tempArray count]>0){
+        NSLog(@"nothing in data file"); 
+        [favoriteIssuesArray addObjectsFromArray:tempArray];
+    }
+    
 
+    
+    NSLog(@"MONKEY:%d", [favoriteIssuesArray count]); 
+    NSLog(@"favoriteIssuePath = %@, count=%d", favoriteIssuePath, [favoriteIssuesArray count]);
+    favoriteIssuesSet = [[NSMutableSet alloc] initWithArray:favoriteIssuesArray];
+    
+     
+    
+    NSMutableArray *issueSorter = [[NSMutableArray alloc] init];
+    issueSorter = [NSKeyedUnarchiver unarchiveObjectWithFile:arrayPath];
+    
     for (int i = 0; i<[issueSorter count]; i++ ) {
         if ([[[issueSorter objectAtIndex:i] objectForKey:@"status"] isEqual: @"responded"]) {
             [unfilteredPeitionTableViewArray addObject:[issueSorter objectAtIndex:i]]; 
@@ -292,9 +329,8 @@ UIActivityIndicatorView *spinner;
           [pickerDisplaySet addObject:[[tmpArray objectAtIndex:j]objectForKey:@"name"]];
         }
     }
-    NSLog(@"pickerDisplaySet: %@", pickerDisplaySet);
+    
     for(id element in pickerDisplaySet) {
-        NSLog(@"element:%@", element); 
         [tempPickerArray addObject:element];
     }
     NSSortDescriptor *nameSorter = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES selector:@selector(caseInsensitiveCompare:)];
@@ -306,9 +342,7 @@ UIActivityIndicatorView *spinner;
 
 
 -(void)viewDidAppear:(BOOL)animated {
-    int searchBarHeight = 40; 
         [super viewDidAppear:animated];
-        //tableView.contentOffset = CGPointMake(0, searchBarHeight);
 }
 
 - (void)viewDidLoad
@@ -324,7 +358,7 @@ UIActivityIndicatorView *spinner;
     pickerViewArray = [[NSMutableArray alloc] init];
     
     UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    closeButton.frame = CGRectMake(0, 0, 60, 44);
+    closeButton.frame = CGRectMake(0, 0, 60, buttonHeight);
     [closeButton setTitle:@"Back" forState:UIControlStateNormal];
     [closeButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     closeButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
@@ -334,7 +368,7 @@ UIActivityIndicatorView *spinner;
     [self.view addSubview:closeButton];
     
     UIButton *helpButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    helpButton.frame = CGRectMake(260, 0, 60, 44);
+    helpButton.frame = CGRectMake(260, 0, 60, buttonHeight);
     [helpButton setTitle:@"Help" forState:UIControlStateNormal];
     [helpButton addTarget:self action:@selector(helpButtonTouched:) forControlEvents:UIControlEventTouchUpInside];
     helpButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
@@ -354,15 +388,6 @@ UIActivityIndicatorView *spinner;
     filterButton.layer.cornerRadius= 6.0f;
     [self.view addSubview:filterButton];
     
-
-    //Setup the Search Bar
-//    UISearchBar *searchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-//    searchBar.barStyle=UIBarStyleBlackTranslucent;
-//    searchBar.showsCancelButton=YES;
-//    searchBar.autocorrectionType=UITextAutocorrectionTypeNo;
-//    searchBar.autocapitalizationType=UITextAutocapitalizationTypeNone;
-//    searchBar.delegate=self;
-//    self.tableView.tableHeaderView=searchBar;
     
     //Setup the PickerView 
     UIPickerView *pickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 44, 320, 200)];
@@ -400,6 +425,44 @@ UIActivityIndicatorView *spinner;
 
 #pragma mark IBActions 
 
+-(void)updateSwitchAtIndexPath:(UISwitch *)aswitch {
+    NSLog(@"SwitchFlipped at row:%i", aswitch.tag);
+    NSLog(@"id: %@", [[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]);
+    
+    if (aswitch.on) {
+        NSLog(@"On");
+        [favoriteIssuesSet addObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]];
+        [favoriteIssuesArray addObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]];
+        NSLog(@"favorite issues Array Count: %d", [favoriteIssuesArray count]);
+
+    }else {
+        NSLog(@"Off");
+        NSLog(@"favorite issues Array Count: %d", [favoriteIssuesArray count]);
+
+        [favoriteIssuesSet removeObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]];
+        [favoriteIssuesArray removeAllObjects];
+        [favoriteIssuesArray addObjectsFromArray:[favoriteIssuesSet allObjects]];
+        
+        //TODO Block this
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        NSString *favoriteIssuePath = [documentsDirectory stringByAppendingString:@"favorite.dat"];
+        [NSKeyedArchiver archiveRootObject:favoriteIssuesArray toFile:favoriteIssuePath];
+
+        NSLog(@"favorite issues Array Count: %d", [favoriteIssuesArray count]);
+    }
+    
+    
+        if ([favoriteIssuesSet containsObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"] ] ) {
+            NSLog(@"Already set");
+        }else {
+            NSLog(@"Not set");
+        
+    }
+        
+    
+}
+
 -(IBAction)filterButtonTouched:(id)sender {
     NSLog(@"Filter Button Touched");
     
@@ -423,7 +486,8 @@ UIActivityIndicatorView *spinner;
     } else {        //Slide the tableview up
         [UIView animateWithDuration:0.5
                          animations:^{
-                             tableView.frame = CGRectMake(0,44, 320, 504);
+                             //([[UIScreen mainScreen] applicationFrame].size.height -44) takes care of bug with screen size on all devices. 
+                             tableView.frame = CGRectMake(0,44, 320, ([[UIScreen mainScreen] applicationFrame].size.height -buttonHeight));
                          }
                          completion:nil];
     }

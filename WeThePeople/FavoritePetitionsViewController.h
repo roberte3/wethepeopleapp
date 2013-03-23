@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "prefs.h" 
 
 @interface FavoritePetitionsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate> {
     UITableView *tableview;

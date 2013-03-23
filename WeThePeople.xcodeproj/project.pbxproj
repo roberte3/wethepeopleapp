@@ -36,6 +36,8 @@
 		08CE9E0616D81B9E008AF6BA /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 08CE9E0516D81B9E008AF6BA /* Icon@2x.png */; };
 		08E4B5C116F0F1760091AFE8 /* FavoritePetitionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E4B5BF16F0F1760091AFE8 /* FavoritePetitionsViewController.m */; };
 		08E4B5C216F0F1760091AFE8 /* FavoritePetitionsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08E4B5C016F0F1760091AFE8 /* FavoritePetitionsViewController.xib */; };
+		08E4B62516FE47AC0091AFE8 /* gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 08E4B62316FE47AB0091AFE8 /* gear.png */; };
+		08E4B62616FE47AC0091AFE8 /* gear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 08E4B62416FE47AB0091AFE8 /* gear@2x.png */; };
 		E56CBEB60291477D900B9DE8 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B1CF65AF24043B895DE8242 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -80,6 +82,8 @@
 		08E4B5BE16F0F1760091AFE8 /* FavoritePetitionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavoritePetitionsViewController.h; sourceTree = "<group>"; };
 		08E4B5BF16F0F1760091AFE8 /* FavoritePetitionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavoritePetitionsViewController.m; sourceTree = "<group>"; };
 		08E4B5C016F0F1760091AFE8 /* FavoritePetitionsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FavoritePetitionsViewController.xib; sourceTree = "<group>"; };
+		08E4B62316FE47AB0091AFE8 /* gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gear.png; sourceTree = "<group>"; };
+		08E4B62416FE47AB0091AFE8 /* gear@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gear@2x.png"; sourceTree = "<group>"; };
 		4B1CF65AF24043B895DE8242 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CD6CEC8F877414F8923BA76 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -103,6 +107,8 @@
 			isa = PBXGroup;
 			children = (
 				08CE9E0516D81B9E008AF6BA /* Icon@2x.png */,
+				08E4B62316FE47AB0091AFE8 /* gear.png */,
+				08E4B62416FE47AB0091AFE8 /* gear@2x.png */,
 				08CE9E0316D81B9A008AF6BA /* Icon.png */,
 				08CE9E0116D81B69008AF6BA /* Default.png */,
 				08CE9DFF16D81B53008AF6BA /* Default@2x.png */,
@@ -248,6 +254,8 @@
 				08CE9E0616D81B9E008AF6BA /* Icon@2x.png in Resources */,
 				0815079C16D9C6C400C311DF /* readme.md in Resources */,
 				08E4B5C216F0F1760091AFE8 /* FavoritePetitionsViewController.xib in Resources */,
+				08E4B62516FE47AC0091AFE8 /* gear.png in Resources */,
+				08E4B62616FE47AC0091AFE8 /* gear@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -383,6 +391,7 @@
 				GCC_PREFIX_HEADER = "WeThePeople/WeThePeople-Prefix.pch";
 				INFOPLIST_FILE = "WeThePeople/WeThePeople-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -395,6 +404,7 @@
 				GCC_PREFIX_HEADER = "WeThePeople/WeThePeople-Prefix.pch";
 				INFOPLIST_FILE = "WeThePeople/WeThePeople-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

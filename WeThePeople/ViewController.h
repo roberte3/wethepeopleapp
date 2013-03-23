@@ -18,7 +18,8 @@
     UIButton *officialResponsesButton;
     UIButton *openPeitionsButton;
     UIButton *awaitingResponseButton;
-    UIButton *favoritePeitionsButton; 
+    UIButton *favoritePeitionsButton;
+    UIButton *retryInternetButton; 
     
     
 }
@@ -26,7 +27,8 @@
 @property (nonatomic, retain) IBOutlet UIButton *officialResponseButton;
 @property (nonatomic, retain) IBOutlet UIButton *openPeitionsButton;
 @property (nonatomic, retain) IBOutlet UIButton *awaitingResponseButton;
-@property (nonatomic, retain) IBOutlet UIButton *favortiePeitionsButton; 
+@property (nonatomic, retain) IBOutlet UIButton *favoritePeitionsButton;
+@property (nonatomic, retain) IBOutlet UIButton *retryInternetButton; 
 
 
 
