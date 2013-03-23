@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h> 
 #import <SBJson/SBJson.h>
+#import "Reachability.h" 
 
 #import "prefs.h"
 

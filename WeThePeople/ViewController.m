@@ -40,6 +40,9 @@ NSMutableData *responseData;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    Reachability *reachability = [Reachability reachabilityForInternetConnection];
+    NetworkStatus internetStatus = [reachability currentReachabilityStatus];
+    
     self.view.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1]; /*#4881b4* aka the color from the official WH app. */
 
     allPeitions = [[NSMutableArray alloc] init];
@@ -60,7 +63,13 @@ NSMutableData *responseData;
     [self.view bringSubviewToFront:spinner];
     [spinner startAnimating]; 
     
-    [self initialPetitionsDownload:self];
+    if (internetStatus != NotReachable) {
+        [self initialPetitionsDownload:self];
+    } else {
+        
+        
+    }
+    
     //[self secondaryPetitionsDownload:self];
 
 	// Do any additional setup after loading the view, typically from a nib.
@@ -161,11 +170,10 @@ NSMutableData *responseData;
     [responseData appendData:data];
 }
 -(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
-    [spinner stopAnimating]; 
+
     NSLog(@"Connection Failure: %@", [error description]);
     
     NSLog(@"error: %@", error);
-    
     if (error.code == -1009) {
         UIAlertView *alert = [[UIAlertView alloc]
                               initWithTitle: @"Announcement"
@@ -182,7 +190,10 @@ NSMutableData *responseData;
                                   otherButtonTitles:nil];
             [alert show];
         }
-
+        [self internetProblem];
+}
+-(void)internetProblem {
+    [spinner stopAnimating];
 
     retryInternetButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     retryInternetButton.frame = CGRectMake(116, 200, 88, 88);
@@ -201,6 +212,7 @@ NSMutableData *responseData;
 }
 
 -(IBAction)retryInternetButtonTouch:(id)sender {
+    [spinner startAnimating]; 
     [self initialPetitionsDownload:self];
     [retryInternetButton setHidden:YES];
     [officialResponseButton setHidden:NO];
