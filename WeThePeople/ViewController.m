@@ -26,7 +26,6 @@
 int currentPeitionsDownloadIncrementer = 0;
 int secondaryDownloadCount = 0;
 bool canAdvanceToNextScreen = FALSE;
-bool failedConnection = FALSE;
 NSMutableArray *allPeitions;
 NSMutableArray *favoritePeitions; 
 
@@ -40,8 +39,7 @@ NSMutableData *responseData;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    Reachability *reachability = [Reachability reachabilityForInternetConnection];
-    NetworkStatus internetStatus = [reachability currentReachabilityStatus];
+
     
     self.view.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1]; /*#4881b4* aka the color from the official WH app. */
 
@@ -50,7 +48,7 @@ NSMutableData *responseData;
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *favoriteIssuePath = [documentsDirectory stringByAppendingString:@"favorite.dat"];
+    NSString *favoriteIssuePath = [documentsDirectory stringByAppendingPathComponent:@"favorite.dat"];
     favoritePeitions = [NSKeyedUnarchiver unarchiveObjectWithFile:favoriteIssuePath];
 
     responseData = [NSMutableData data]; //Download temp cache.
@@ -63,16 +61,8 @@ NSMutableData *responseData;
     [self.view bringSubviewToFront:spinner];
     [spinner startAnimating]; 
     
-    if (internetStatus != NotReachable) {
-        [self initialPetitionsDownload:self];
-    } else {
-        
-        
-    }
-    
-    //[self secondaryPetitionsDownload:self];
-
-	// Do any additional setup after loading the view, typically from a nib.
+    [self initialPetitionsDownload:self];
+ 
 }
 
 -(IBAction)officialResponseTouch:(id)sender {
@@ -100,6 +90,13 @@ NSMutableData *responseData;
 
 -(IBAction)favoritePeitionsTouch:(id)sender {
     NSLog(@"favoritePeitionsTouch");
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *favoriteIssuePath = [documentsDirectory stringByAppendingPathComponent:@"favorite.dat"];
+    [favoritePeitions removeAllObjects]; 
+    favoritePeitions = [NSKeyedUnarchiver unarchiveObjectWithFile:favoriteIssuePath];
+
 
     if (canAdvanceToNextScreen && [favoritePeitions count] > 0) {
         FavoritePetitionsViewController *controller = [[FavoritePetitionsViewController alloc] initWithNibName:@"FavoritePetitionsViewController" bundle:nil];
@@ -108,6 +105,11 @@ NSMutableData *responseData;
         
     } else {
         NSLog(@"No");
+
+
+        
+        
+        
         UIAlertView *alert = [[UIAlertView alloc]
                               initWithTitle:@"Favorite a peition to get notifications, and view this screen. " message:nil delegate:nil
                               cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
@@ -143,6 +145,7 @@ NSMutableData *responseData;
     NSURLRequest *request = [NSURLRequest requestWithURL:download_url];
     NSLog(@"Starting Request:");
     [NSURLConnection connectionWithRequest:request delegate:self];
+    
     
 
     
@@ -251,36 +254,11 @@ NSMutableData *responseData;
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *arrayPath = [documentsDirectory stringByAppendingPathComponent:@"peitions.dat"];
+    NSLog(@"ArrayPath: %@", arrayPath); 
 
     [NSKeyedArchiver archiveRootObject:peititionListingResultsArray toFile:arrayPath];
     canAdvanceToNextScreen = YES;
     [spinner stopAnimating];
-    
-    
-//    if (signaturesURLReqest) {
-//        NSArray *signaturesArray = [[NSArray alloc] init];
-//        NSString *responseString = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
-//        //NSLog(@"responseString: %@", responseString);
-//        NSString *response = responseString;
-//        SBJsonParser *parser = [[SBJsonParser alloc] init];
-//        NSDictionary *signaturesDict = [parser objectWithString:response error:nil];
-//        
-//        signaturesResultsArray = [signaturesDict objectForKey:@"results"];
-//        //NSLog(@"dict: %@",  signaturesResultsArray);
-//        NSLog(@"Number of records to download %@", [[[signaturesDict objectForKey:@"metadata"] objectForKey:@"resultset"]objectForKey:@"count"]);
-//        
-//        signaturesArray = [signaturesDict objectForKey:@"results"];
-//        
-//        if ([[[[signaturesDict objectForKey:@"metadata"] objectForKey:@"resultset"]objectForKey:@"count"] integerValue] > 1000) {
-//            NSLog(@"More than a thousandRecords");
-//            //[[[[signaturesDict objectForKey:@"metadata"] objectForKey:@"resultset"]objectForKey:@"count"] integerValue]-1000;
-//            
-//        }else {
-//            NSLog(@"Less than a thousandRecords");
-//            
-//        }
-//        
-    
     
     
 }

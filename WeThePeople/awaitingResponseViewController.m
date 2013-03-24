@@ -44,13 +44,10 @@ UIActivityIndicatorView *spinner;
 
 #pragma mark pickerView Code
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
-    NSLog(@"picker row text: %@", [pickerViewArray objectAtIndex:row]);
+   // NSLog(@"picker row text: %@", [pickerViewArray objectAtIndex:row]);
     
     
-    Reachability *reachability = [Reachability reachabilityForInternetConnection];
-    NetworkStatus internetStatus = [reachability currentReachabilityStatus];
-    
-    if (internetStatus != NotReachable) {
+
         if (row == 0) {
             peitionTableViewArray = unfilteredPeitionTableViewArray;
         }
@@ -61,18 +58,11 @@ UIActivityIndicatorView *spinner;
                 NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ANY issues.name ==%@", [pickerViewArray objectAtIndex:row]];
                 [peitionTableViewArray addObjectsFromArray:[unfilteredPeitionTableViewArray filteredArrayUsingPredicate:predicate]];
                 NSArray *tempArray = [[NSArray alloc] initWithArray:[unfilteredPeitionTableViewArray filteredArrayUsingPredicate:predicate]];
-                NSLog(@"tempArray count: %d", [tempArray count]);
-            
-                NSLog(@"peitionArrayCount: %d", [peitionTableViewArray count]);
+
             }
             
         }
-    } else {
-        UIAlertView *alert = [[UIAlertView alloc]
-                              initWithTitle:@"Problem with Internet" message:nil delegate:nil
-                              cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-        [alert show];
-    }
+
     [tableView reloadData]; //Update the table
     
 }
@@ -114,8 +104,7 @@ UIActivityIndicatorView *spinner;
     
     for (int i = 0; i<[issueSorter count]; i++ ) {
         
-        //    "signatures needed" = 0;
-       // status = "pending response";
+        //   "signatures needed" = 0  and  status = "pending response";
         if ([[[issueSorter objectAtIndex:i] objectForKey:@"status"] isEqual: @"pending response"] && [[[issueSorter objectAtIndex:i] objectForKey:@"signatures needed"] integerValue] ==0 ) {
             [peitionTableViewArray addObject:[issueSorter objectAtIndex:i]];
             [unfilteredPeitionTableViewArray addObject:[issueSorter objectAtIndex:i]];
@@ -141,16 +130,13 @@ UIActivityIndicatorView *spinner;
             [pickerDisplaySet addObject:[[tmpArray objectAtIndex:j]objectForKey:@"name"]];
         }
     }
-    NSLog(@"pickerDisplaySet: %@", pickerDisplaySet);
     for(id element in pickerDisplaySet) {
-        NSLog(@"element:%@", element);
         [tempPickerArray addObject:element];
     }
     NSSortDescriptor *nameSorter = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES selector:@selector(caseInsensitiveCompare:)];
     [tempPickerArray sortUsingDescriptors:[NSArray arrayWithObject:nameSorter]]; //Everything should be a string and sorted Alpha
     
     [pickerViewArray addObjectsFromArray:tempPickerArray];
-    NSLog(@"pickerViewArray Count:%d", [pickerViewArray count]);
 
     
 }
@@ -209,8 +195,6 @@ UIActivityIndicatorView *spinner;
 #pragma mark tableView Code
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    NSLog(@"Selected Row: %d" , indexPath.row);
     
     NSLog(@"Issue URL: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"url" ]);
     
@@ -409,8 +393,7 @@ UIActivityIndicatorView *spinner;
 
 -(IBAction)filterButtonTouched:(id)sender {
     NSLog(@"Filter Button Touched");
-    
-    
+        
     if (tableView.frame.origin.y == 44.0f) { //Tableview is at top of screen.
         //slide the tableview down.
         [UIView animateWithDuration:0.5

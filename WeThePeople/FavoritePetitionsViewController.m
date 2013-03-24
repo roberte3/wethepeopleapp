@@ -32,8 +32,6 @@ NSMutableArray *peitionTableViewArray;
     NSMutableArray *issueSorter = [[NSMutableArray alloc] init];
     issueSorter = [NSKeyedUnarchiver unarchiveObjectWithFile:arrayPath];
     
- 
-    
     NSMutableArray *openPeitionsArray = [[NSMutableArray alloc] init];
     NSMutableArray *respondedPeitionsArray = [[NSMutableArray alloc] init];
     NSMutableArray *peitionsAwaitingResponseArray = [[NSMutableArray alloc] init]; 
@@ -118,8 +116,6 @@ NSMutableArray *peitionTableViewArray;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // determine the selected data from the IndexPath.row
-    
-    NSLog(@"Selected Row: %d" , indexPath.row);
     
     NSLog(@"Issue URL: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"url" ]);
     

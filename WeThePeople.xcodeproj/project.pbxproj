@@ -39,7 +39,6 @@
 		08E4B62516FE47AC0091AFE8 /* gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 08E4B62316FE47AB0091AFE8 /* gear.png */; };
 		08E4B62616FE47AC0091AFE8 /* gear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 08E4B62416FE47AB0091AFE8 /* gear@2x.png */; };
 		08E4B62D16FE70B80091AFE8 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 08E4B62C16FE70B80091AFE8 /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		08E4B62F16FE70CD0091AFE8 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08E4B62E16FE70CD0091AFE8 /* SystemConfiguration.framework */; };
 		E56CBEB60291477D900B9DE8 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B1CF65AF24043B895DE8242 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -88,7 +87,6 @@
 		08E4B62416FE47AB0091AFE8 /* gear@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gear@2x.png"; sourceTree = "<group>"; };
 		08E4B62B16FE70B80091AFE8 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		08E4B62C16FE70B80091AFE8 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
-		08E4B62E16FE70CD0091AFE8 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		4B1CF65AF24043B895DE8242 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CD6CEC8F877414F8923BA76 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -98,7 +96,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				08E4B62F16FE70CD0091AFE8 /* SystemConfiguration.framework in Frameworks */,
 				08CE9DC116D7C6D4008AF6BA /* UIKit.framework in Frameworks */,
 				08CE9DC316D7C6D4008AF6BA /* Foundation.framework in Frameworks */,
 				08CE9DC516D7C6D4008AF6BA /* CoreGraphics.framework in Frameworks */,
@@ -112,7 +109,6 @@
 		08CE9DB416D7C6D4008AF6BA = {
 			isa = PBXGroup;
 			children = (
-				08E4B62E16FE70CD0091AFE8 /* SystemConfiguration.framework */,
 				08CE9E0516D81B9E008AF6BA /* Icon@2x.png */,
 				08E4B62316FE47AB0091AFE8 /* gear.png */,
 				08E4B62416FE47AB0091AFE8 /* gear@2x.png */,

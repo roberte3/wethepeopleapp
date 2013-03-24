@@ -184,16 +184,6 @@ UIActivityIndicatorView *spinner;
     filterButton.layer.cornerRadius= 6.0f;
     [self.view addSubview:filterButton];
     
-    
-    //Setup the Search Bar
-    //    UISearchBar *searchBar = [[UISearchBar alloc]initWithFrame:CGRectMake(0, 0, 320, 44)];
-    //    searchBar.barStyle=UIBarStyleBlackTranslucent;
-    //    searchBar.showsCancelButton=YES;
-    //    searchBar.autocorrectionType=UITextAutocorrectionTypeNo;
-    //    searchBar.autocapitalizationType=UITextAutocapitalizationTypeNone;
-    //    searchBar.delegate=self;
-    //    self.tableView.tableHeaderView=searchBar;
-    
     //Setup the PickerView
     UIPickerView *pickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 44, 320, 200)];
     pickerView.showsSelectionIndicator = YES;
@@ -216,11 +206,10 @@ UIActivityIndicatorView *spinner;
     
     
     
-    webView = [[UIWebView alloc] initWithFrame:self.view.bounds];  //Change self.view.bounds to a smaller CGRect if you don't want it to take up the whole screen
+    webView = [[UIWebView alloc] initWithFrame:self.view.bounds]; 
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     webView.scalesPageToFit = YES;
     webView.delegate  = self;
-    
     [self.view addSubview:webView];
     
     spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];

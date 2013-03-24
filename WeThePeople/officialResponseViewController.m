@@ -46,7 +46,6 @@ UIActivityIndicatorView *spinner;
 
 #pragma mark pickerView Code 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
-    NSLog(@"picker row text: %@", [pickerViewArray objectAtIndex:row]); 
     
     if (row == 0) {
         peitionTableViewArray = unfilteredPeitionTableViewArray;
@@ -58,10 +57,6 @@ UIActivityIndicatorView *spinner;
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ANY issues.name ==%@", [pickerViewArray objectAtIndex:row]];
             [peitionTableViewArray addObjectsFromArray:[unfilteredPeitionTableViewArray filteredArrayUsingPredicate:predicate]];
             NSArray *tempArray = [[NSArray alloc] initWithArray:[unfilteredPeitionTableViewArray filteredArrayUsingPredicate:predicate]]; 
-            NSLog(@"tempArray count: %d", [tempArray count]);
-
-            NSLog(@"peitionArrayCount: %d", [peitionTableViewArray count]); 
-            
             
         }
     }
@@ -115,8 +110,6 @@ UIActivityIndicatorView *spinner;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // determine the selected data from the IndexPath.row
-    
-    NSLog(@"Selected Row: %d" , indexPath.row);
     
     NSLog(@"Issue URL: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"url" ]);
 
@@ -259,7 +252,7 @@ UIActivityIndicatorView *spinner;
     daysLeftLabel.text = [NSString stringWithFormat:@"%d days left on petition", numberOfDays];
     
     if ( [favoriteIssuesSet containsObject:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"id"]]) {
-    [favoriteSwitch setOn:YES];
+        [favoriteSwitch setOn:YES];
     }
     
     NSLog(@"MakeCell ID: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"id"]);
@@ -282,26 +275,19 @@ UIActivityIndicatorView *spinner;
 }
 
 -(void)viewWillAppear:(BOOL)animated {
+    favoriteIssuesArray = [[NSMutableArray alloc] init];
+
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *arrayPath = [documentsDirectory stringByAppendingPathComponent:@"peitions.dat"];
-    NSString *favoriteIssuePath = [documentsDirectory stringByAppendingString:@"favorite.dat"]; 
-    
-    favoriteIssuesArray = [[NSMutableArray alloc] init];
-    NSMutableArray *tempArray =[[NSMutableArray alloc] initWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:@"favoriteIssuePath"]];
-    if ([tempArray count]>0){
-        NSLog(@"nothing in data file"); 
-        [favoriteIssuesArray addObjectsFromArray:tempArray];
-    }
-    
+    NSString *favoriteIssuePath = [documentsDirectory stringByAppendingPathComponent:@"favorite.dat"];
 
+    //favoriteIssuesSet = the on off state of the favorite switches on the cells. 
+    favoriteIssuesSet = [[NSMutableSet alloc] initWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:favoriteIssuePath]];
+    [favoriteIssuesArray addObjectsFromArray:[favoriteIssuesSet allObjects]]; 
+    NSLog(@"favoriteIssueSetMonkey: %@", favoriteIssuesSet); 
     
-    NSLog(@"MONKEY:%d", [favoriteIssuesArray count]); 
-    NSLog(@"favoriteIssuePath = %@, count=%d", favoriteIssuePath, [favoriteIssuesArray count]);
-    favoriteIssuesSet = [[NSMutableSet alloc] initWithArray:favoriteIssuesArray];
-    
-     
-    
+    //Creates the Main table structure. 
     NSMutableArray *issueSorter = [[NSMutableArray alloc] init];
     issueSorter = [NSKeyedUnarchiver unarchiveObjectWithFile:arrayPath];
     
@@ -337,7 +323,6 @@ UIActivityIndicatorView *spinner;
     [tempPickerArray sortUsingDescriptors:[NSArray arrayWithObject:nameSorter]]; //Everything should be a string and sorted Alpha
     
     [pickerViewArray addObjectsFromArray:tempPickerArray];
-    NSLog(@"pickerViewArray Count:%d", [pickerViewArray count]);
 }
 
 
@@ -426,9 +411,7 @@ UIActivityIndicatorView *spinner;
 #pragma mark IBActions 
 
 -(void)updateSwitchAtIndexPath:(UISwitch *)aswitch {
-    NSLog(@"SwitchFlipped at row:%i", aswitch.tag);
-    NSLog(@"id: %@", [[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]);
-    
+
     if (aswitch.on) {
         NSLog(@"On");
         [favoriteIssuesSet addObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]];
@@ -437,29 +420,26 @@ UIActivityIndicatorView *spinner;
 
     }else {
         NSLog(@"Off");
-        NSLog(@"favorite issues Array Count: %d", [favoriteIssuesArray count]);
 
         [favoriteIssuesSet removeObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]];
         [favoriteIssuesArray removeAllObjects];
         [favoriteIssuesArray addObjectsFromArray:[favoriteIssuesSet allObjects]];
         
-        //TODO Block this
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentsDirectory = [paths objectAtIndex:0];
-        NSString *favoriteIssuePath = [documentsDirectory stringByAppendingString:@"favorite.dat"];
-        [NSKeyedArchiver archiveRootObject:favoriteIssuesArray toFile:favoriteIssuePath];
+    }
+    //TODO Block this
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *favoriteIssuePath = [documentsDirectory stringByAppendingPathComponent:@"favorite.dat"];
+    NSLog(@"favsize:%d", [favoriteIssuesArray count]);
 
-        NSLog(@"favorite issues Array Count: %d", [favoriteIssuesArray count]);
-    }
+    [NSKeyedArchiver archiveRootObject:favoriteIssuesArray toFile:favoriteIssuePath];
     
+    NSMutableArray *returnedMutableArray = [[NSMutableArray alloc] init];
+    returnedMutableArray = [NSKeyedUnarchiver unarchiveObjectWithFile:favoriteIssuePath]; 
+
+
+
     
-        if ([favoriteIssuesSet containsObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"] ] ) {
-            NSLog(@"Already set");
-        }else {
-            NSLog(@"Not set");
-        
-    }
-        
     
 }
 
@@ -479,8 +459,6 @@ UIActivityIndicatorView *spinner;
             
         NSDictionary *issuesDic = [[[unfilteredPeitionTableViewArray objectAtIndex:i] objectForKey:@"issues"] objectAtIndex:0];
         [issuesArray addObject:issuesDic];
-            
-            
             
         }
     } else {        //Slide the tableview up
