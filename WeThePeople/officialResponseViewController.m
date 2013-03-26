@@ -115,8 +115,6 @@ UIActivityIndicatorView *spinner;
 
     NSURL *url = [ [ NSURL alloc ] initWithString:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"url"] ];
 
-
-    
     webView = [[UIWebView alloc] initWithFrame:self.view.bounds];  //Change self.view.bounds to a smaller CGRect if you don't want it to take up the whole screen
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
     webView.scalesPageToFit = YES;
@@ -258,9 +256,6 @@ UIActivityIndicatorView *spinner;
     NSLog(@"MakeCell ID: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"id"]);
     NSLog(@"MakeCell set: %@", favoriteIssuesSet); 
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    
-
-
     
     return cell;
     
@@ -436,11 +431,7 @@ UIActivityIndicatorView *spinner;
     
     NSMutableArray *returnedMutableArray = [[NSMutableArray alloc] init];
     returnedMutableArray = [NSKeyedUnarchiver unarchiveObjectWithFile:favoriteIssuePath]; 
-
-
-
-    
-    
+  
 }
 
 -(IBAction)filterButtonTouched:(id)sender {

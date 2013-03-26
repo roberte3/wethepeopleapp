@@ -20,6 +20,8 @@ NSMutableArray *peitionTableViewArray;
 NSMutableArray *unfilteredPeitionTableViewArray;
 NSMutableArray *issuesArray;
 NSMutableArray *pickerViewArray;
+NSMutableArray *favoriteIssuesArray;
+NSMutableSet  *favoriteIssuesSet;
 @synthesize tableView; 
 
 UIWebView *webView;
@@ -95,22 +97,31 @@ UIActivityIndicatorView *spinner;
 }
 
 -(void)viewWillAppear:(BOOL)animated {
+    favoriteIssuesArray = [[NSMutableArray alloc] init];
+
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *arrayPath = [documentsDirectory stringByAppendingPathComponent:@"peitions.dat"];
+    NSString *favoriteIssuePath = [documentsDirectory stringByAppendingPathComponent:@"favorite.dat"];
+
+    //favoriteIssuesSet = the on off state of the favorite switches on the cells.
+    favoriteIssuesSet = [[NSMutableSet alloc] initWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:favoriteIssuePath]];
+    [favoriteIssuesArray addObjectsFromArray:[favoriteIssuesSet allObjects]];
+    NSLog(@"favoriteIssueSetMonkey: %@", favoriteIssuesSet);
     
+    //Creates Main Table 
     NSMutableArray *issueSorter = [[NSMutableArray alloc] init];
     issueSorter = [NSKeyedUnarchiver unarchiveObjectWithFile:arrayPath];
     
     for (int i = 0; i<[issueSorter count]; i++ ) {
         
-        //   "signatures needed" = 0  and  status = "pending response";
+        //   "signatures needed" = 0  and status = "pending response";
         if ([[[issueSorter objectAtIndex:i] objectForKey:@"status"] isEqual: @"pending response"] && [[[issueSorter objectAtIndex:i] objectForKey:@"signatures needed"] integerValue] ==0 ) {
             [peitionTableViewArray addObject:[issueSorter objectAtIndex:i]];
             [unfilteredPeitionTableViewArray addObject:[issueSorter objectAtIndex:i]];
             
         } else {
-            NSLog(@"responded");
+            //NSLog(@"responded or needs signatures");
         }
     }
     //Create pickerView array;
@@ -317,7 +328,10 @@ UIActivityIndicatorView *spinner;
     [cell.contentView addSubview:favoriteSwitchLabel];
     
     UISwitch *favoriteSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(200, 160, 180, 20)];
+    favoriteSwitch.tag = indexPath.row;
+    [favoriteSwitch addTarget:self action:@selector(updateSwitchAtIndexPath:) forControlEvents:UIControlEventTouchUpInside];
     [cell.contentView addSubview:favoriteSwitch];
+    
     
     //display the signatures needed
     NSString *signaturesNeededText = [NSString stringWithFormat:@"Signatures Count: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"signature count"] ];
@@ -340,9 +354,8 @@ UIActivityIndicatorView *spinner;
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
-    NSArray *issues = [[NSArray alloc] initWithArray:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"issues"]];
-    for (int j =0;  j<[issues count]; j++) {
-        // NSLog(@"Cell Issues: %@", [[issues objectAtIndex:j] objectForKey:@"name"]);
+    if ( [favoriteIssuesSet containsObject:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"id"]]) {
+        [favoriteSwitch setOn:YES];
     }
     
     return cell;
@@ -390,6 +403,34 @@ UIActivityIndicatorView *spinner;
 
 
 #pragma mark IBActions
+-(void)updateSwitchAtIndexPath:(UISwitch *)aswitch {
+    
+    if (aswitch.on) {
+        NSLog(@"On");
+        [favoriteIssuesSet addObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]];
+        [favoriteIssuesArray addObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]];
+        NSLog(@"favorite issues Array Count: %d", [favoriteIssuesArray count]);
+        
+    }else {
+        NSLog(@"Off");
+        
+        [favoriteIssuesSet removeObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]];
+        [favoriteIssuesArray removeAllObjects];
+        [favoriteIssuesArray addObjectsFromArray:[favoriteIssuesSet allObjects]];
+        
+    }
+    //TODO Block this
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *favoriteIssuePath = [documentsDirectory stringByAppendingPathComponent:@"favorite.dat"];
+    NSLog(@"favsize:%d", [favoriteIssuesArray count]);
+    
+    [NSKeyedArchiver archiveRootObject:favoriteIssuesArray toFile:favoriteIssuePath];
+    
+    NSMutableArray *returnedMutableArray = [[NSMutableArray alloc] init];
+    returnedMutableArray = [NSKeyedUnarchiver unarchiveObjectWithFile:favoriteIssuePath];
+    
+}
 
 -(IBAction)filterButtonTouched:(id)sender {
     NSLog(@"Filter Button Touched");

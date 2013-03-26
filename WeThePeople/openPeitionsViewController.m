@@ -19,6 +19,8 @@ NSMutableArray *peitionTableViewArray;
 NSMutableArray *unfilteredPeitionTableViewArray;
 NSMutableArray *issuesArray;
 NSMutableArray *pickerViewArray;
+NSMutableArray *favoriteIssuesArray;
+NSMutableSet  *favoriteIssuesSet;
 
 @synthesize tableView;
 
@@ -53,11 +55,6 @@ UIActivityIndicatorView *spinner;
             [peitionTableViewArray removeAllObjects];
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ANY issues.name ==%@", [pickerViewArray objectAtIndex:row]];
             [peitionTableViewArray addObjectsFromArray:[unfilteredPeitionTableViewArray filteredArrayUsingPredicate:predicate]];
-            NSArray *tempArray = [[NSArray alloc] initWithArray:[unfilteredPeitionTableViewArray filteredArrayUsingPredicate:predicate]];
-            NSLog(@"tempArray count: %d", [tempArray count]);
-            
-            NSLog(@"peitionArrayCount: %d", [peitionTableViewArray count]);
-            
             
         }
     }
@@ -94,9 +91,17 @@ UIActivityIndicatorView *spinner;
 }
 
 -(void)viewWillAppear:(BOOL)animated {
+    favoriteIssuesArray = [[NSMutableArray alloc] init];
+    
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *arrayPath = [documentsDirectory stringByAppendingPathComponent:@"peitions.dat"];
+    NSString *favoriteIssuePath = [documentsDirectory stringByAppendingPathComponent:@"favorite.dat"];
+    
+    //favoriteIssuesSet = the on off state of the favorite switches on the cells.
+    favoriteIssuesSet = [[NSMutableSet alloc] initWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:favoriteIssuePath]];
+    [favoriteIssuesArray addObjectsFromArray:[favoriteIssuesSet allObjects]];
+    NSLog(@"favoriteIssueSetMonkey: %@", favoriteIssuesSet);
     
     NSMutableArray *issueSorter = [[NSMutableArray alloc] init];
     issueSorter = [NSKeyedUnarchiver unarchiveObjectWithFile:arrayPath];
@@ -130,7 +135,6 @@ UIActivityIndicatorView *spinner;
     }
     NSLog(@"pickerDisplaySet: %@", pickerDisplaySet);
     for(id element in pickerDisplaySet) {
-        NSLog(@"element:%@", element);
         [tempPickerArray addObject:element];
     }
     NSSortDescriptor *nameSorter = [[NSSortDescriptor alloc] initWithKey:nil ascending:YES selector:@selector(caseInsensitiveCompare:)];
@@ -139,8 +143,6 @@ UIActivityIndicatorView *spinner;
     [pickerViewArray addObjectsFromArray:tempPickerArray];
     NSLog(@"pickerViewArray Count:%d", [pickerViewArray count]);
 
-    
-    
 }
 
 - (void)viewDidLoad
@@ -318,6 +320,8 @@ UIActivityIndicatorView *spinner;
     [cell.contentView addSubview:favoriteSwitchLabel];
     
     UISwitch *favoriteSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(200, 160, 180, 20)];
+    favoriteSwitch.tag = indexPath.row;
+    [favoriteSwitch addTarget:self action:@selector(updateSwitchAtIndexPath:) forControlEvents:UIControlEventTouchUpInside];
     [cell.contentView addSubview:favoriteSwitch];
     
     //display the signatures needed
@@ -341,9 +345,8 @@ UIActivityIndicatorView *spinner;
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
-    NSArray *issues = [[NSArray alloc] initWithArray:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"issues"]];
-    for (int j =0;  j<[issues count]; j++) {
-        // NSLog(@"Cell Issues: %@", [[issues objectAtIndex:j] objectForKey:@"name"]);
+    if ( [favoriteIssuesSet containsObject:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"id"]]) {
+        [favoriteSwitch setOn:YES];
     }
     
     return cell;
@@ -359,12 +362,39 @@ UIActivityIndicatorView *spinner;
 }
 
 -(void)viewDidAppear:(BOOL)animated {
-    int searchBarHeight = 40;
     [super viewDidAppear:animated];
 }
 
 
 #pragma mark IBActions
+-(void)updateSwitchAtIndexPath:(UISwitch *)aswitch {
+    
+    if (aswitch.on) {
+        NSLog(@"On");
+        [favoriteIssuesSet addObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]];
+        [favoriteIssuesArray addObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]];
+        NSLog(@"favorite issues Array Count: %d", [favoriteIssuesArray count]);
+        
+    }else {
+        NSLog(@"Off");
+        
+        [favoriteIssuesSet removeObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]];
+        [favoriteIssuesArray removeAllObjects];
+        [favoriteIssuesArray addObjectsFromArray:[favoriteIssuesSet allObjects]];
+        
+    }
+    //TODO Block this
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *favoriteIssuePath = [documentsDirectory stringByAppendingPathComponent:@"favorite.dat"];
+    NSLog(@"favsize:%d", [favoriteIssuesArray count]);
+    
+    [NSKeyedArchiver archiveRootObject:favoriteIssuesArray toFile:favoriteIssuePath];
+    
+    NSMutableArray *returnedMutableArray = [[NSMutableArray alloc] init];
+    returnedMutableArray = [NSKeyedUnarchiver unarchiveObjectWithFile:favoriteIssuePath];
+    
+}
 
 -(IBAction)filterButtonTouched:(id)sender {
     NSLog(@"Filter Button Touched");

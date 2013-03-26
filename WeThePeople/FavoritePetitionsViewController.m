@@ -22,21 +22,37 @@ UIButton *zoomButton;
 UIActivityIndicatorView *spinner;
 
 NSMutableArray *peitionTableViewArray;
-
+NSMutableSet *favoriteIssuesSet;
+NSMutableArray *favoriteIssuesArray; 
 
 -(void)viewWillAppear:(BOOL)animated {
+    favoriteIssuesArray = [[NSMutableArray alloc] init];
+    
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *arrayPath = [documentsDirectory stringByAppendingPathComponent:@"peitions.dat"];
+    NSString *favoriteIssuePath = [documentsDirectory stringByAppendingPathComponent:@"favorite.dat"];
+    
+    //get built list of fav issues from file.
+    favoriteIssuesSet = [[NSMutableSet alloc] initWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:favoriteIssuePath]];
     
     NSMutableArray *issueSorter = [[NSMutableArray alloc] init];
     issueSorter = [NSKeyedUnarchiver unarchiveObjectWithFile:arrayPath];
     
+    NSMutableArray *tmpArray = [[NSMutableArray alloc] init]; 
+    for(int i=0; i<[issueSorter count]; i++ ){
+        if ([favoriteIssuesSet containsObject:[[issueSorter objectAtIndex:i] objectForKey:@"id"]]) {
+            [tmpArray addObject:[issueSorter objectAtIndex:i]];
+        }
+    }
+    //Clear the issueSorter and replace its contents with the favorited items.
+    [issueSorter removeAllObjects];
+    [issueSorter addObjectsFromArray:tmpArray];
+    
+    
     NSMutableArray *openPeitionsArray = [[NSMutableArray alloc] init];
     NSMutableArray *respondedPeitionsArray = [[NSMutableArray alloc] init];
     NSMutableArray *peitionsAwaitingResponseArray = [[NSMutableArray alloc] init]; 
-    
-    
     
     for (int i = 0; i<[issueSorter count]; i++ ) {
         if ([[[issueSorter objectAtIndex:i] objectForKey:@"status"] isEqual: @"open"] && [[[issueSorter objectAtIndex:i] objectForKey:@"signatures needed"] integerValue] >0 ) {
@@ -53,7 +69,10 @@ NSMutableArray *peitionTableViewArray;
         }
     }
 
-    
+[peitionTableViewArray addObject:respondedPeitionsArray];
+[peitionTableViewArray addObject:peitionsAwaitingResponseArray];
+[peitionTableViewArray addObject:openPeitionsArray]; 
+
 }
 
 -(IBAction)backButtonClick:(id)sender {
@@ -100,7 +119,7 @@ NSMutableArray *peitionTableViewArray;
 
 -(IBAction)notificationSettingsButtonTouch:(id)sender {
     UIAlertView *alert = [[UIAlertView alloc]
-                          initWithTitle:@"Not Implemented Yet" message:nil delegate:nil
+                          initWithTitle:@"Push notifications are not implemented in the source code release" message:nil delegate:nil
                           cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
     [alert show];
 }
@@ -117,11 +136,9 @@ NSMutableArray *peitionTableViewArray;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // determine the selected data from the IndexPath.row
     
-    NSLog(@"Issue URL: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"url" ]);
+    NSLog(@"Issue URL: %@", [[[peitionTableViewArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row] objectForKey:@"url" ]);
     
-    NSURL *url = [ [ NSURL alloc ] initWithString:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"url"] ];
-    
-    
+    NSURL *url = [ [ NSURL alloc ] initWithString:[[[peitionTableViewArray objectAtIndex: indexPath.section] objectAtIndex:indexPath.row] objectForKey:@"url"]];
     
     webView = [[UIWebView alloc] initWithFrame:self.view.bounds];  //Change self.view.bounds to a smaller CGRect if you don't want it to take up the whole screen
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
@@ -180,12 +197,23 @@ NSMutableArray *peitionTableViewArray;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [peitionTableViewArray count];
+    return [[peitionTableViewArray objectAtIndex:section] count];
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *sectionHeaderView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 100, buttonHeight)];
-    
+    UIView *sectionHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 22)];
+    UILabel *sectionHeaderLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 320, 22)];
+    sectionHeaderLabel.textColor = [UIColor whiteColor]; 
+    if (section == 0) {
+        sectionHeaderLabel.text = [NSString stringWithFormat:@"Responded petitions"];
+    }else if (section == 1) {
+        sectionHeaderLabel.text = [NSString stringWithFormat:@"Petitions awaiting response"];
+    }else if (section == 2) {
+        sectionHeaderLabel.text = [NSString stringWithFormat:@"Open petitions"];
+
+    }
+     [sectionHeaderView addSubview:sectionHeaderLabel];
+    sectionHeaderLabel.backgroundColor = [UIColor redColor];
     return sectionHeaderView;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -204,7 +232,7 @@ NSMutableArray *peitionTableViewArray;
     peitionTitleLabel.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1];  /*#4881b4*/
     
     // custom views should be added as subviews of the cell's contentView:
-    [cell.contentView addSubview:peitionTitleLabel];
+   [cell.contentView addSubview:peitionTitleLabel];
     
     UILabel *statusLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 140, 180, 20)];
     [statusLabel setTag:4];
@@ -215,7 +243,7 @@ NSMutableArray *peitionTableViewArray;
     statusLabel.layer.cornerRadius = 10.0f;
     statusLabel.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1];  /*#4881b4*/
     [cell.contentView addSubview:statusLabel];
-    
+
     //create the remaining signatures label
     UILabel *signaturesCountLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 160, 180, 20)];
     [signaturesCountLabel setTag:2];
@@ -226,7 +254,7 @@ NSMutableArray *peitionTableViewArray;
     signaturesCountLabel.layer.cornerRadius = 10.0f;
     signaturesCountLabel.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1];  /*#4881b4*/
     [cell.contentView addSubview:signaturesCountLabel];
-    
+  
     //create the time left label
     UILabel *daysLeftLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 180, 180, 20)];
     [daysLeftLabel setTag:3];
@@ -237,33 +265,33 @@ NSMutableArray *peitionTableViewArray;
     daysLeftLabel.layer.cornerRadius = 10.0f;
     daysLeftLabel.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1];  /*#4881b4*/
     [cell.contentView addSubview:daysLeftLabel];
-    
-    //Create the favorite switch
-    UILabel *favoriteSwitchLabel = [[UILabel alloc] initWithFrame:CGRectMake(220, 140, 180, 20)];
-    favoriteSwitchLabel.text = @"Favorite";
-    favoriteSwitchLabel.font = [UIFont boldSystemFontOfSize:11.0];
-    favoriteSwitchLabel.textColor = [UIColor blackColor];
-    [cell.contentView addSubview:favoriteSwitchLabel];
-    
-    UISwitch *favoriteSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(200, 160, 180, 20)];
-    favoriteSwitch.tag = indexPath.row;
-    [favoriteSwitch addTarget:self action:@selector(updateSwitchAtIndexPath:) forControlEvents:UIControlEventTouchUpInside];
-    [cell.contentView addSubview:favoriteSwitch];
-    
+//
+//    //Create the favorite switch
+//    UILabel *favoriteSwitchLabel = [[UILabel alloc] initWithFrame:CGRectMake(220, 140, 180, 20)];
+//    favoriteSwitchLabel.text = @"Favorite";
+//    favoriteSwitchLabel.font = [UIFont boldSystemFontOfSize:11.0];
+//    favoriteSwitchLabel.textColor = [UIColor blackColor];
+//    [cell.contentView addSubview:favoriteSwitchLabel];
+//    
+//    UISwitch *favoriteSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(200, 160, 180, 20)];
+//    favoriteSwitch.tag = indexPath.row;
+//    [favoriteSwitch addTarget:self action:@selector(updateSwitchAtIndexPath:) forControlEvents:UIControlEventTouchUpInside];
+//    [cell.contentView addSubview:favoriteSwitch];
+
     //display the signatures needed
-    NSString *signaturesNeededText = [NSString stringWithFormat:@"Signatures Count: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"signature count"] ];
+    NSString *signaturesNeededText = [NSString stringWithFormat:@"Signatures Count: %@", [[[peitionTableViewArray objectAtIndex: indexPath.section] objectAtIndex:indexPath.row] objectForKey:@"signature count"] ];
     signaturesCountLabel.text = signaturesNeededText;
     
     //display the peition title
-    peitionTitleLabel.text = [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"title"];
+    peitionTitleLabel.text = [[[peitionTableViewArray objectAtIndex:indexPath.section ] objectAtIndex:indexPath.row] objectForKey:@"title"];
     
     //display the status
-    statusLabel.text = [NSString stringWithFormat:@"Status: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"status"]];
+    statusLabel.text = [NSString stringWithFormat:@"Status: %@", [[[peitionTableViewArray  objectAtIndex:indexPath.section] objectAtIndex:indexPath.row] objectForKey:@"status"]];
     
     //display the days left
     //We get the Unix timeStamp for @"deadline" and convert it into a displayable string in the tableview.
     //Apple often gets their date math wrong, hopefully this is all correct and works...
-    NSDate *lastDayDate = [NSDate dateWithTimeIntervalSince1970:[[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"deadline"] doubleValue]];
+    NSDate *lastDayDate = [NSDate dateWithTimeIntervalSince1970:[[[[peitionTableViewArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row] objectForKey:@"deadline"] doubleValue]];
     NSDate *now = [NSDate date];
     NSTimeInterval diff = [lastDayDate  timeIntervalSinceDate:now];
     int numberOfDays = diff / 86400;
@@ -271,10 +299,10 @@ NSMutableArray *peitionTableViewArray;
     
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
-    NSArray *issues = [[NSArray alloc] initWithArray:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"issues"]];
-    for (int j =0;  j<[issues count]; j++) {
-        // NSLog(@"Cell Issues: %@", [[issues objectAtIndex:j] objectForKey:@"name"]);
-    }
+//    NSArray *issues = [[NSArray alloc] initWithArray:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"issues"]];
+//    for (int j =0;  j<[issues count]; j++) {
+//        // NSLog(@"Cell Issues: %@", [[issues objectAtIndex:j] objectForKey:@"name"]);
+//    }
     
     return cell;
     
@@ -282,8 +310,6 @@ NSMutableArray *peitionTableViewArray;
 
 -(void)updateSwitchAtIndexPath:(UISwitch *)aswitch {
         NSLog(@"Row %i", aswitch.tag);
-        
-
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
