@@ -14,13 +14,15 @@
 		<dict>
 			<key>CFBundleIconFiles</key>
 			<array>
-				<string>Icon.png</string>
-				<string>Icon@2x.png</string>
+				<string>logo-sm.png</string>
+				<string>logo-lg.png</string>
 			</array>
+			<key>UIPrerenderedIcon</key>
+			<true/>
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
-	<string>com.devnull.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>com.devnull.WeThePeople</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -37,6 +39,8 @@
 	<true/>
 	<key>UIFileSharingEnabled</key>
 	<false/>
+	<key>UIPrerenderedIcon</key>
+	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

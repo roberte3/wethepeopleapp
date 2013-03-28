@@ -22,7 +22,8 @@ NSMutableArray *issuesArray;
 NSMutableArray *pickerViewArray;
 NSMutableArray *favoriteIssuesArray;
 NSMutableSet  *favoriteIssuesSet;
-@synthesize tableView; 
+@synthesize tableView;
+@synthesize filterButton;
 
 UIWebView *webView;
 UIButton *browserCloseButton;
@@ -107,7 +108,7 @@ UIActivityIndicatorView *spinner;
     //favoriteIssuesSet = the on off state of the favorite switches on the cells.
     favoriteIssuesSet = [[NSMutableSet alloc] initWithArray:[NSKeyedUnarchiver unarchiveObjectWithFile:favoriteIssuePath]];
     [favoriteIssuesArray addObjectsFromArray:[favoriteIssuesSet allObjects]];
-    NSLog(@"favoriteIssueSetMonkey: %@", favoriteIssuesSet);
+   // NSLog(@"favoriteIssueSetMonkey: %@", favoriteIssuesSet);
     
     //Creates Main Table 
     NSMutableArray *issueSorter = [[NSMutableArray alloc] init];
@@ -157,6 +158,9 @@ UIActivityIndicatorView *spinner;
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
+    self.view.backgroundColor = [UIColor colorWithRed:0.031 green:0.157 blue:0.349 alpha:1]; /*#082859*/
+    self.tableView.separatorColor = [UIColor blackColor]; //[UIColor colorWithRed:0.031 green:0.157 blue:0.349 alpha:1];
+
     peitionTableViewArray = [[NSMutableArray alloc] init];
     issuesArray = [[NSMutableArray alloc] init];
     unfilteredPeitionTableViewArray = [[NSMutableArray alloc] init];
@@ -164,42 +168,45 @@ UIActivityIndicatorView *spinner;
     
     UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     closeButton.frame = CGRectMake(0, 0, 60, buttonHeight);
-    [closeButton setTitle:@"Back" forState:UIControlStateNormal];
+    [closeButton setTitle:@"close" forState:UIControlStateNormal];
     [closeButton addTarget:self action:@selector(backButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    closeButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
-    closeButton.layer.borderColor = [UIColor blackColor].CGColor;
+    //closeButton.backgroundColor = [UIColor colorWithRed:0.024 green:0.098 blue:0.235 alpha:1];
     closeButton.layer.borderWidth = 1.0f;
-    closeButton.layer.cornerRadius= 7.0f;
+//    closeButton.layer.cornerRadius= 7.0f;
     [self.view addSubview:closeButton];
     
-    UIButton *helpButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    helpButton.frame = CGRectMake(260, 0, 60, buttonHeight);
-    [helpButton setTitle:@"Help" forState:UIControlStateNormal];
-    [helpButton addTarget:self action:@selector(helpButtonTouched:) forControlEvents:UIControlEventTouchUpInside];
-    helpButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
-    helpButton.layer.borderColor = [UIColor blackColor].CGColor;
-    helpButton.layer.borderWidth = 1.0f;
-    helpButton.layer.cornerRadius = 7.0f;
-    [self.view addSubview:helpButton];
+//    UIButton *helpButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//    helpButton.frame = CGRectMake(260, 0, 60, buttonHeight);
+//    [helpButton setTitle:@"Help" forState:UIControlStateNormal];
+//    [helpButton addTarget:self action:@selector(helpButtonTouched:) forControlEvents:UIControlEventTouchUpInside];
+//    helpButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
+//    helpButton.layer.borderColor = [UIColor blackColor].CGColor;
+//    helpButton.layer.borderWidth = 1.0f;
+//    helpButton.layer.cornerRadius = 7.0f;
+//    [self.view addSubview:helpButton];
     
     
-    UIButton *filterButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    filterButton.frame = CGRectMake(62, 20, 196, 24);
+    filterButton = [UIButton buttonWithType:UIButtonTypeCustom];
+   // CGRectMake(<#CGFloat x#>, <#CGFloat y#>, <#CGFloat width#>, <#CGFloat height#>)
+    filterButton.frame = CGRectMake(0, 42, 320, 24);
+    [filterButton setBackgroundImage:[UIImage imageNamed:@"filterButton.png"] forState:UIControlStateNormal];
+    filterButton.layer.zPosition = 1;
     [filterButton setTitle:@"Filter" forState:UIControlStateNormal];
+    [filterButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal]; 
     [filterButton addTarget:self action:@selector(filterButtonTouched:) forControlEvents:UIControlEventTouchUpInside];
-    filterButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
-    filterButton.layer.borderColor = [UIColor blackColor].CGColor;
-    filterButton.layer.borderWidth = 1.0f;
-    filterButton.layer.cornerRadius= 6.0f;
+    //filterButton.layer.borderColor = [UIColor blackColor].CGColor;
+//    filterButton.layer.borderWidth = 1.0f;
+//    filterButton.layer.cornerRadius= 6.0f;
     [self.view addSubview:filterButton];
     
 
     //Setup the PickerView
-    UIPickerView *pickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 44, 320, 200)];
+    UIPickerView *pickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 70, 320, 200)];
     pickerView.showsSelectionIndicator = YES;
     pickerView.delegate = self;
     [self.view addSubview:pickerView];
     [self.view bringSubviewToFront:tableView];
+    [self.view bringSubviewToFront:filterButton]; 
     
 }
 
@@ -207,11 +214,11 @@ UIActivityIndicatorView *spinner;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSLog(@"Issue URL: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"url" ]);
+    //NSLog(@"Issue URL: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"url" ]);
     
     NSURL *url = [ [ NSURL alloc ] initWithString:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"url"] ];
     
-    
+    [filterButton setHidden:YES]; 
     
     webView = [[UIWebView alloc] initWithFrame:self.view.bounds];  //Change self.view.bounds to a smaller CGRect if you don't want it to take up the whole screen
     [webView loadRequest:[NSURLRequest requestWithURL:url]];
@@ -231,12 +238,13 @@ UIActivityIndicatorView *spinner;
     
     browserCloseButton = [UIButton buttonWithType:UIButtonTypeCustom];
     browserCloseButton.frame = CGRectMake(0, 0, 60, buttonHeight);
-    [browserCloseButton setTitle:@"Back" forState:UIControlStateNormal];
+    [browserCloseButton setTitle:@"close" forState:UIControlStateNormal];
     [browserCloseButton addTarget:self action:@selector(browserCloseClick:) forControlEvents:UIControlEventTouchUpInside];
-    browserCloseButton.backgroundColor = [UIColor colorWithRed:0.812 green:0.416 blue:0.349 alpha:1];
+    browserCloseButton.backgroundColor = [UIColor colorWithRed:0.031 green:0.157 blue:0.349 alpha:1];
     browserCloseButton.layer.borderColor = [UIColor blackColor].CGColor;
     browserCloseButton.layer.borderWidth = 1.0f;
     browserCloseButton.layer.cornerRadius= 7.0f;
+    browserCloseButton.titleLabel.textColor = [UIColor whiteColor]; 
     [self.view addSubview:browserCloseButton];
     
     zoomButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -272,30 +280,40 @@ UIActivityIndicatorView *spinner;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell* cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-    cell.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1];  /*#4881b4*/
+    [cell setBackgroundColor: [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1]];  /*#4881b4*/
     
+    UIImageView *discloseNavView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"disclosureNav.png"]];
+    discloseNavView.frame = CGRectMake(260, 50, 50, 87);
+    [cell.contentView addSubview:discloseNavView]; 
+    
+    float threshold = [[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"signature threshold"]floatValue];
+    float signatures = [[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"signature count"] floatValue];
+    NSNumber *thresholdNumber = [NSNumber numberWithFloat:threshold];
+    NSNumber *signatureNumber = [NSNumber numberWithFloat:signatures];
+    
+    NSNumberFormatter *formmatter = [[NSNumberFormatter alloc] init];
+    [formmatter setNumberStyle:NSNumberFormatterDecimalStyle];
+    NSString *thresholdString = [formmatter stringFromNumber:thresholdNumber];
+    NSString *signatureString = [formmatter stringFromNumber:signatureNumber]; 
     // create the title label:                                             x    y   width  height
-    UILabel *peitionTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 10.0, 280, 120)];
+    UILabel *peitionTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 15, 280, 120)];
     [peitionTitleLabel setTag:1];
     [peitionTitleLabel setFont:[UIFont boldSystemFontOfSize:17.0]];
-    peitionTitleLabel.textAlignment= NSTextAlignmentCenter;
+    peitionTitleLabel.textAlignment= NSTextAlignmentLeft;
     peitionTitleLabel.textColor = [UIColor whiteColor];
     peitionTitleLabel.numberOfLines = 5;
-    peitionTitleLabel.layer.borderWidth = 1.0f;
-    peitionTitleLabel.layer.cornerRadius= 10.0f;
-    peitionTitleLabel.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1];  /*#4881b4*/
+
+    peitionTitleLabel.backgroundColor = [UIColor colorWithRed:0.024 green:0.098 blue:0.235 alpha:1];  /*#4881b4*/
     
     // custom views should be added as subviews of the cell's contentView:
     [cell.contentView addSubview:peitionTitleLabel];
     
-    UILabel *statusLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 140, 180, 20)];
+    UILabel *statusLabel = [[UILabel alloc] initWithFrame:CGRectMake(200, 0, 280, 20)];
     [statusLabel setTag:4];
     [statusLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
     statusLabel.textAlignment = NSTextAlignmentLeft;
     statusLabel.textColor = [UIColor whiteColor];
-    statusLabel.layer.borderWidth = 1.0f;
-    statusLabel.layer.cornerRadius = 10.0f;
-    statusLabel.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1];  /*#4881b4*/
+    statusLabel.backgroundColor = [UIColor colorWithRed:0.024 green:0.098 blue:0.235 alpha:1]; 
     [cell.contentView addSubview:statusLabel];
     
     //create the remaining signatures label
@@ -304,63 +322,79 @@ UIActivityIndicatorView *spinner;
     [signaturesCountLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
     signaturesCountLabel.textAlignment = NSTextAlignmentLeft;
     signaturesCountLabel.textColor = [UIColor whiteColor];
-    signaturesCountLabel.layer.borderWidth = 1.0f;
-    signaturesCountLabel.layer.cornerRadius = 10.0f;
-    signaturesCountLabel.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1];  /*#4881b4*/
+    signaturesCountLabel.backgroundColor =[UIColor colorWithRed:0.024 green:0.098 blue:0.235 alpha:1]; 
     [cell.contentView addSubview:signaturesCountLabel];
     
     //create the time left label
-    UILabel *daysLeftLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 180, 180, 20)];
+    UILabel *daysLeftLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 170, 20)];
     [daysLeftLabel setTag:3];
     [daysLeftLabel setFont:[UIFont boldSystemFontOfSize:12.0]];
     daysLeftLabel.textAlignment = NSTextAlignmentLeft;
     daysLeftLabel.textColor = [UIColor whiteColor];
-    daysLeftLabel.layer.borderWidth = 1.0f;
-    daysLeftLabel.layer.cornerRadius = 10.0f;
-    daysLeftLabel.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1];  /*#4881b4*/
+
+    daysLeftLabel.backgroundColor = [UIColor colorWithRed:0.024 green:0.098 blue:0.235 alpha:1];
     [cell.contentView addSubview:daysLeftLabel];
     
     //Create the favorite switch
-    UILabel *favoriteSwitchLabel = [[UILabel alloc] initWithFrame:CGRectMake(220, 140, 180, 20)];
-    favoriteSwitchLabel.text = @"Favorite";
+    UILabel *favoriteSwitchLabel = [[UILabel alloc] initWithFrame:CGRectMake(240, 140, 180, 20)];
+    favoriteSwitchLabel.text = @"Favorite:";
     favoriteSwitchLabel.font = [UIFont boldSystemFontOfSize:11.0];
-    favoriteSwitchLabel.textColor = [UIColor blackColor];
+    favoriteSwitchLabel.textColor = [UIColor whiteColor];
+    favoriteSwitchLabel.backgroundColor = [UIColor clearColor]; 
     [cell.contentView addSubview:favoriteSwitchLabel];
     
-    UISwitch *favoriteSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(200, 160, 180, 20)];
+    UISwitch *favoriteSwitch = [[UISwitch alloc] initWithFrame:CGRectMake(240, 160, 180, 20)];
     favoriteSwitch.tag = indexPath.row;
     [favoriteSwitch addTarget:self action:@selector(updateSwitchAtIndexPath:) forControlEvents:UIControlEventTouchUpInside];
     [cell.contentView addSubview:favoriteSwitch];
     
+    //ProgressBar 
+
+    UIProgressView *progressBar = [[UIProgressView alloc] initWithFrame:CGRectMake(10, 180, 180, 30)];
+    progressBar.progressViewStyle = UIProgressViewStyleDefault;
+    //NSLog(@"%f", threshold/signatures);
+    [progressBar setProgress:signatures/threshold];
     
+    
+    [cell.contentView addSubview:progressBar];
     //display the signatures needed
-    NSString *signaturesNeededText = [NSString stringWithFormat:@"Signatures Count: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"signature count"] ];
+    NSString *signaturesNeededText = [NSString stringWithFormat:@"%@ of %@ Signatures", signatureString, thresholdString];
     signaturesCountLabel.text = signaturesNeededText;
     
+
     //display the peition title
     peitionTitleLabel.text = [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"title"];
     
     //display the status
-    statusLabel.text = [NSString stringWithFormat:@"Status: %@", [[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"status"]];
+    statusLabel.text = [NSString stringWithFormat:@"Awaiting Response"];
     
     //display the days left
     //We get the Unix timeStamp for @"deadline" and convert it into a displayable string in the tableview.
     //Apple often gets their date math wrong, hopefully this is all correct and works...
     NSDate *lastDayDate = [NSDate dateWithTimeIntervalSince1970:[[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"deadline"] doubleValue]];
     NSDate *now = [NSDate date];
-    NSTimeInterval diff = [lastDayDate  timeIntervalSinceDate:now];
+    //NSTimeInterval diff = [lastDayDate  timeIntervalSinceDate:now];
+    NSTimeInterval diff = [now  timeIntervalSinceDate:lastDayDate];
     int numberOfDays = diff / 86400;
-    daysLeftLabel.text = [NSString stringWithFormat:@"%d days left on petition", numberOfDays];
+    daysLeftLabel.text = [NSString stringWithFormat:@"%d days since petition ended", numberOfDays];
     
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
     
     if ( [favoriteIssuesSet containsObject:[[peitionTableViewArray objectAtIndex:indexPath.row] objectForKey:@"id"]]) {
         [favoriteSwitch setOn:YES];
     }
-    
+   // cell.backgroundColor = [UIColor colorWithRed:0.024 green:0.098 blue:0.235 alpha:1];
+    cell.layer.backgroundColor = [UIColor colorWithRed:0.024 green:0.098 blue:0.235 alpha:1].CGColor;
     return cell;
     
 }
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+        cell.backgroundColor = [UIColor colorWithRed:0.024 green:0.098 blue:0.235 alpha:1];
+
+}
+
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
@@ -371,7 +405,6 @@ UIActivityIndicatorView *spinner;
 }
 
 -(void)viewDidAppear:(BOOL)animated {
-    int searchBarHeight = 40;
     [super viewDidAppear:animated];
     //tableView.contentOffset = CGPointMake(0, searchBarHeight);
 }
@@ -390,7 +423,7 @@ UIActivityIndicatorView *spinner;
 }
 
 -(IBAction)resizeWebView:(id)sender {
-    NSLog(@"resizeWebView");
+   // NSLog(@"resizeWebView");
     NSString *jsCommand = [NSString stringWithFormat:@"document.body.style.zoom = .5;"];
     [webView stringByEvaluatingJavaScriptFromString:jsCommand];
 }
@@ -398,6 +431,7 @@ UIActivityIndicatorView *spinner;
     [zoomButton removeFromSuperview];
     [browserCloseButton removeFromSuperview];
     [webView removeFromSuperview];
+    [filterButton setHidden:NO]; 
     
 }
 
@@ -406,13 +440,13 @@ UIActivityIndicatorView *spinner;
 -(void)updateSwitchAtIndexPath:(UISwitch *)aswitch {
     
     if (aswitch.on) {
-        NSLog(@"On");
+       // NSLog(@"On");
         [favoriteIssuesSet addObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]];
         [favoriteIssuesArray addObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]];
-        NSLog(@"favorite issues Array Count: %d", [favoriteIssuesArray count]);
+       // NSLog(@"favorite issues Array Count: %d", [favoriteIssuesArray count]);
         
     }else {
-        NSLog(@"Off");
+       // NSLog(@"Off");
         
         [favoriteIssuesSet removeObject:[[peitionTableViewArray objectAtIndex:aswitch.tag] objectForKey:@"id"]];
         [favoriteIssuesArray removeAllObjects];
@@ -423,7 +457,7 @@ UIActivityIndicatorView *spinner;
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *favoriteIssuePath = [documentsDirectory stringByAppendingPathComponent:@"favorite.dat"];
-    NSLog(@"favsize:%d", [favoriteIssuesArray count]);
+    //NSLog(@"favsize:%d", [favoriteIssuesArray count]);
     
     [NSKeyedArchiver archiveRootObject:favoriteIssuesArray toFile:favoriteIssuePath];
     
@@ -435,7 +469,7 @@ UIActivityIndicatorView *spinner;
 -(IBAction)filterButtonTouched:(id)sender {
     NSLog(@"Filter Button Touched");
         
-    if (tableView.frame.origin.y == 44.0f) { //Tableview is at top of screen.
+    if (tableView.frame.origin.y == 70.0f) { //Tableview is at top of screen.
         //slide the tableview down.
         [UIView animateWithDuration:0.5
                          animations:^{
@@ -448,14 +482,12 @@ UIActivityIndicatorView *spinner;
             NSDictionary *issuesDic = [[[unfilteredPeitionTableViewArray objectAtIndex:i] objectForKey:@"issues"] objectAtIndex:0];
             [issuesArray addObject:issuesDic];
             
-            
-            
         }
     } else {        //Slide the tableview up
         [UIView animateWithDuration:0.5
                          animations:^{
                              //([[UIScreen mainScreen] applicationFrame].size.height -buttonHeight) takes care of bug with screen size on all devices.
-                             tableView.frame = CGRectMake(0,44, 320, ([[UIScreen mainScreen] applicationFrame].size.height -buttonHeight));                         }
+                             tableView.frame = CGRectMake(0,70, 320, ([[UIScreen mainScreen] applicationFrame].size.height -buttonHeight));                         }
                          completion:nil];
     }
 }

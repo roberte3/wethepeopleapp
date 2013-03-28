@@ -11,6 +11,9 @@
 #import "openPeitionsViewController.h" 
 #import "awaitingResponseViewController.h" 
 #import "FavoritePetitionsViewController.h" 
+#import "ATConnect.h" 
+#import "ATSurveys.h"
+#import "ShakeView.h" 
 
 @interface ViewController ()
 
@@ -39,9 +42,16 @@ NSMutableData *responseData;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
     
-    self.view.backgroundColor = [UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1]; /*#4881b4* aka the color from the official WH app. */
+    
+    ATConnect *connection = [ATConnect sharedConnection];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(surveyBecameAvailable:)
+                                                 name:ATSurveyNewSurveyAvailableNotification object:nil];
+    [ATSurveys checkForAvailableSurveys];
+
+    self.view.backgroundColor = [UIColor colorWithRed:0.031 green:0.157 blue:0.349 alpha:1]; /*#082859*/
+    //[UIColor colorWithRed:0.282 green:0.506 blue:0.706 alpha:1]; /*#4881b4* aka the color from the official WH app. */
 
     allPeitions = [[NSMutableArray alloc] init];
     favoritePeitions = [[NSMutableArray alloc] init];
@@ -53,16 +63,53 @@ NSMutableData *responseData;
 
     responseData = [NSMutableData data]; //Download temp cache.
     
+    openPeitionsButton.backgroundColor = [UIColor colorWithRed:0.024 green:0.098 blue:0.235 alpha:1];
+    officialResponseButton.backgroundColor = [UIColor colorWithRed:0.024 green:0.098 blue:0.235 alpha:1];
+    favoritePeitionsButton.backgroundColor = [UIColor colorWithRed:0.024 green:0.098 blue:0.235 alpha:1];
+    awaitingResponseButton.backgroundColor = [UIColor colorWithRed:0.024 green:0.098 blue:0.235 alpha:1];
+    [openPeitionsButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal ];
+    [favoritePeitionsButton  setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal ];
+    [awaitingResponseButton  setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal ];
+    [officialResponseButton  setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal ];
+    [officialResponseButton setTitle:@" Official Responses" forState:UIControlStateNormal]; 
     
     spinner = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     spinner.frame = CGRectMake(0, 0, 80.0, 80.0);
-    spinner.center = CGPointMake(160, 120);
+    spinner.center = CGPointMake([[UIScreen mainScreen] applicationFrame].size.width/2, [[UIScreen mainScreen] applicationFrame].size.height/2);
     [self.view addSubview: spinner];
     [self.view bringSubviewToFront:spinner];
     [spinner startAnimating]; 
     
     [self initialPetitionsDownload:self];
+    
+   // [self sendParseFavoriteList];
  
+}
+//
+//- (void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event {
+//    if (motion == UIEventSubtypeMotionShake) {
+//        NSLog(@"shake!");
+//        [self launchApptentive]; 
+//    }
+//}
+//
+//-(void)launchApptentive{
+//
+//}
+
+
+
+-(void)sendParseFavoriteList {
+        PFObject *testObject = [PFObject objectWithClassName:@"FavoriteObject"];
+        [testObject addObjectsFromArray:favoritePeitions forKey:@"favString"]; 
+        [testObject save];
+
+}
+
+- (void)surveyBecameAvailable:(NSNotification *)notification {
+    // Present survey here as appropriate.
+    // For example, automatically show the survey:
+    [ATSurveys presentSurveyControllerFromViewController:self]; 
 }
 
 -(IBAction)officialResponseTouch:(id)sender {
@@ -81,6 +128,7 @@ NSMutableData *responseData;
     if (canAdvanceToNextScreen) {
         openPeitionsViewController *controller = [[openPeitionsViewController alloc] initWithNibName:@"openPeitionsViewController" bundle:nil];
         [self presentViewController:controller animated:YES completion:nil];
+        
 
         
     } else {
@@ -141,9 +189,9 @@ NSMutableData *responseData;
     
     currentPeitionsDownloadIncrementer = 1000; //set global variable for downloading more peititions.
     NSURL *download_url = [NSURL URLWithString:petitionsString];
-    NSLog(@"downloadURL:%@", download_url);
+   // NSLog(@"downloadURL:%@", download_url);
     NSURLRequest *request = [NSURLRequest requestWithURL:download_url];
-    NSLog(@"Starting Request:");
+    //NSLog(@"Starting Request:");
     [NSURLConnection connectionWithRequest:request delegate:self];
     
     
@@ -240,8 +288,8 @@ NSMutableData *responseData;
     
         
         for (int i = 0; i<[peititionListingResultsArray count]; i++) {
-            NSLog(@"<> %@", [peititionListingResultsArray objectAtIndex:i]); 
-            NSLog(@"Signatures Needed:%@", [[peititionListingResultsArray objectAtIndex:i] objectForKey:@"signatures needed"]);
+         //   NSLog(@"<> %@", [peititionListingResultsArray objectAtIndex:i]);
+           // NSLog(@"Signatures Needed:%@", [[peititionListingResultsArray objectAtIndex:i] objectForKey:@"signatures needed"]);
          
         }
     [allPeitions addObjectsFromArray:peititionListingResultsArray];
@@ -254,11 +302,37 @@ NSMutableData *responseData;
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *arrayPath = [documentsDirectory stringByAppendingPathComponent:@"peitions.dat"];
-    NSLog(@"ArrayPath: %@", arrayPath); 
+  //  NSLog(@"ArrayPath: %@", arrayPath);
 
     [NSKeyedArchiver archiveRootObject:peititionListingResultsArray toFile:arrayPath];
     canAdvanceToNextScreen = YES;
     [spinner stopAnimating];
+    
+    [UIView animateWithDuration:0.5
+                     animations:^{
+                         officialResponseButton.frame = CGRectMake(5, 227, 310, 53);                         }
+                     completion:nil];
+
+    [UIView animateWithDuration:0.5
+                     animations:^{
+                         openPeitionsButton.frame = CGRectMake(5, 288, 310, 53);                         }
+                     completion:nil];
+    
+    [UIView animateWithDuration:0.5
+                     animations:^{
+                         awaitingResponseButton.frame = CGRectMake(5, 349, 310, 53);                         }
+                     completion:nil];
+    [UIView animateWithDuration:0.5
+                     animations:^{
+                         favoritePeitionsButton.frame = CGRectMake(5, 410, 310, 53);                         }
+                     completion:nil];
+    
+    
+
+//    Official Reponses (5, 247, 310, 53);
+//    open (5, 308, 310, 53)
+//    awaiting(5, 369, 310, 53)
+//    favorite(5, 430, 310, 53)
     
     
 }

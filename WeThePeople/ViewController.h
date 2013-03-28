@@ -10,6 +10,7 @@
 #import <QuartzCore/QuartzCore.h> 
 #import <SBJson/SBJson.h>
 #import "Reachability.h" 
+#import <Parse/Parse.h> 
 
 #import "prefs.h"
 

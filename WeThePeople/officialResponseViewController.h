@@ -18,9 +18,8 @@
     NSInteger savedScopeButtonIndex; 
 
 }
-
+@property (nonatomic, retain) IBOutlet UIImageView *headerImage; 
 @property (nonatomic, retain) IBOutlet UITableView *tableView;
-@property (nonatomic, retain) IBOutlet UISwitch *tableswitch;
-
+@property (nonatomic, retain) IBOutlet UIButton *filterButton; 
 
 @end

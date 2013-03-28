@@ -7,6 +7,9 @@
 //
 
 #import "AppDelegate.h"
+#import "TestFlight.h" 
+#import "ATConnect.h" 
+#import <Parse/Parse.h> 
 
 #import "ViewController.h"
 
@@ -14,6 +17,21 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [TestFlight takeOff:@"cbe87002-e682-4ef8-b9ea-b7398bae81ee"];
+    NSString *kApptentiveAPIKey =
+    @"9d7fc82ff64c0420c0a333710261088919f54544e959e0c11dcfaa0b5a2fb652";
+    ATConnect *connection = [ATConnect sharedConnection];
+    connection.apiKey = kApptentiveAPIKey;
+    [Parse setApplicationId:@"51bRiDIZuGct7h1Rw5uOCOdMr1fEHw5cHwYv6RT6"
+                  clientKey:@"It8iaMEthIPEj8WxIxqflMfY18HFfrpNVXd5XHm5"];
+    [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
+    
+//    [application registerForRemoteNotificationTypes:
+//     UIRemoteNotificationTypeBadge |
+//     UIRemoteNotificationTypeAlert |
+//     UIRemoteNotificationTypeSound];
+    
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
@@ -25,6 +43,22 @@
     [self.window makeKeyAndVisible];
     return YES;
 }
+
+//- (void)application:(UIApplication *)application
+//didReceiveRemoteNotification:(NSDictionary *)userInfo {
+//    [PFPush handlePush:userInfo];
+//}
+
+
+- (void)application:(UIApplication *)application
+didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken
+{
+    // Store the deviceToken in the current installation and save it to Parse.
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    [currentInstallation setDeviceTokenFromData:newDeviceToken];
+    [currentInstallation saveInBackground];
+}
+
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
